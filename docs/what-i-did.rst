@@ -17,6 +17,10 @@ The goal on this was pretty unambitious. No replacing jqUI themes with
 Twitter Bootstrap, no juicing. Just point at the SlickGrid stuff,
 but solve the examples.css mishmash issue.
 
+This example is purposely very dumb. No row selection, editing,
+dragging. Not even a model! The goal is was to make something so small
+and concise as a first step, it could all fit in my brain.
+
 Along the way, I tried very hard to only include the JS (especially
 from plugins) that was absolutely needed.
 
