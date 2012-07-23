@@ -57,4 +57,12 @@ it is possible that some other stuff is needed.
 
 For now though, it is 38kb instead of 160kb.
 
+Demo 04 - Richer Grid
+=====================
+
+We're at the point where we are making decisions that might break when
+we add more features back in. If we do sorting, can we find the icon
+for showing the sort direction? How about column resizing?
+
+This step makes a richer demo, so we can then do the juicing step.
 
