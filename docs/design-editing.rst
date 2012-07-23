@@ -3,31 +3,15 @@ Touch Support for SlickGrid Editing
 ===================================
 
 
-Grids for Viewers
+Grids for Editing
 =================
 
-The sections below discuss interactions by viewers of content. No
-editing, deleting, moving, ordering, etc.
 
-Layout
-------
+Low
+---
 
-- Large targets
+- Re-ordering
 
-- Fills the height, but not too much
+- Drag-and-drop (from one group to another)
 
-- 4 form factors (including column settings)
-
-- Re-layouts when orientation changes
-
-- Row height
-
-Scrolling
----------
-
-Visiting
---------
-
-- Transitions
-
-- In-place visiting, Back button
+- Some people won't have permission to edit/operate
