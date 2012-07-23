@@ -10,8 +10,8 @@ file, with some relative references that never quite work out right.
 
 So, here's what I did.
 
-Demo 01
-=======
+Demo 01 - Tiny Start
+====================
 
 The goal on this was pretty unambitious. No replacing jqUI themes with
 Twitter Bootstrap, no juicing. Just point at the SlickGrid stuff,
@@ -30,8 +30,8 @@ from plugins) that was absolutely needed.
 
 #. Chose all the correct ``.js`` to include.
 
-Demo 02
-=======
+Demo 02 - Yank jQuery UI Theme CSS
+==================================
 
 SlickGrid uses jQuery UI themes. SGT could keep this and get the
 Bootstrap theme for jQuery UI. But that still means 1,
@@ -42,5 +42,19 @@ only 11 lines (I think) of JS point at a class in jqUI. So I copied the
 rules out of jquery-ui-1.8.16.custom.css into sgt02.css.
 
 It worked! Of course it is naive. But maybe feasible.
+
+
+Demo 03 - Slim jQuery UI JS
+===========================
+
+SlickGrid won't initialize without jquery-ui-1.8.16.custom.min.js.
+But perhaps we can make a much smaller version of that,
+including only the widget factory and any pieces that are needed?
+
+For this step I built a jQuery UI download with everything in the core,
+plus the "sortable" interaction. Later, when we do column resizing,
+it is possible that some other stuff is needed.
+
+For now though, it is 38kb instead of 160kb.
 
 
