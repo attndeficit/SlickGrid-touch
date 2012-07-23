@@ -30,3 +30,17 @@ from plugins) that was absolutely needed.
 
 #. Chose all the correct ``.js`` to include.
 
+Demo 02
+=======
+
+SlickGrid uses jQuery UI themes. SGT could keep this and get the
+Bootstrap theme for jQuery UI. But that still means 1,
+300+ lines of CSS injected into the equation.
+
+How much of jqUI themes is used by SlickGrid? For the stuff in Demo 01,
+only 11 lines (I think) of JS point at a class in jqUI. So I copied the
+rules out of jquery-ui-1.8.16.custom.css into sgt02.css.
+
+It worked! Of course it is naive. But maybe feasible.
+
+
