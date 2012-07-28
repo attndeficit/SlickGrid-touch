@@ -55,7 +55,7 @@ For this step I built a jQuery UI download with everything in the core,
 plus the "sortable" interaction. Later, when we do column resizing,
 it is possible that some other stuff is needed.
 
-For now though, it is 38kb instead of 160kb.
+For now though, it is 56kb instead of 160kb.
 
 Demo 04 - Richer Grid
 =====================
