@@ -66,3 +66,8 @@ for showing the sort direction? How about column resizing?
 
 This step makes a richer demo, so we can then do the juicing step.
 
+- Linked to slick.columnpicker.css...didn't copy over,
+  as this might get ripped out
+
+- TODO Previous demos were missing slick-default-theme.css stuff,
+  might want to copy back into them
