@@ -2,7 +2,7 @@
 
 
 function log () {
-    var args = [];
+    var args = [new Date()];
     var i;
     for (i = 0; i < arguments.length; i++) {
         var item = arguments[i];
