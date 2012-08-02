@@ -42,8 +42,7 @@ var options = {
     enableAddRow:true,
     enableCellNavigation:true,
     asyncEditorLoading:true,
-    forceFitColumns:false,
-    topPanelHeight:25
+    forceFitColumns:false
 };
 
 var sortcol = "title";
