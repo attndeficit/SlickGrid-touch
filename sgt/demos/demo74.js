@@ -210,10 +210,14 @@ $(function () {
     // XXX there is no such element.
     //$("#gridContainer").resizable();
 
-    $('#myGrid .slick-header-columns').hammer({
-    }).bind('hold tap doubletap transformstart transform transformend dragstart drag dragend swipe release', function (evt) {
+    /*
+    $('#myGrid .slick-header-columns .slick-header-column').hammer({
+    })
+    .bind('hold tap doubletap transformstart transform transformend dragstart drag dragend swipe release', function (evt) {
         log('HAMMER', evt.type, evt.position, evt.touches, evt);
-    });
+    })
+    ;
+    */
 
 });
 
