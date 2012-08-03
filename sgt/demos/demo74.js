@@ -4,18 +4,31 @@
 function log () {
     var args = [new Date()];
     var i;
-    for (i = 0; i < arguments.length; i++) {
-        var item = arguments[i];
-        try {
-            JSON.stringify(item);
-        } catch (e) {
-            // Chrome hates circular references.
-            item = '' + item;
-        }
-        args.push(item);
+    for (i=0; i<arguments.length; i++) {
+        args.push(arguments[i]);
     }
+    args = _safeConvert(args);
     var repr = JSON.stringify(args);
     $('#logger').prepend('<p>' + repr + '</p>');
+}
+
+function _safeConvert(obj) {
+    var type = $.type(obj);
+    if (type == 'object' && $(obj).parent().length > 0) {
+        obj = "DOM #" + $(obj).attr('id');
+    } else if (type == 'array' || type == 'object') {
+        var res;
+        if (type == 'array') {
+            res = [];
+        } else {
+            res = {};
+        }
+        $.each(obj, function(key, value) {
+            res[key] = _safeConvert(value);
+        });
+        obj = res;
+    }
+    return obj;
 }
 
 
@@ -38,7 +51,7 @@ var columns = [
 ];
 
 var options = {
-    editable:true,
+    editable: false,
     enableAddRow:true,
     enableCellNavigation:true,
     asyncEditorLoading:true,
@@ -206,17 +219,13 @@ $(function () {
     dataView.setFilter(myFilter);
     dataView.endUpdate();
 
-    // XXX there is no such element.
-    //$("#gridContainer").resizable();
-
-    /*
-    $('#myGrid .slick-header-columns .slick-header-column').hammer({
+    $('#myGrid .slick-cell').hammer({
     })
-    .bind('hold tap doubletap transformstart transform transformend dragstart drag dragend swipe release', function (evt) {
-        log('HAMMER', evt.type, evt.position, evt.touches, evt);
+    //.bind('hold tap doubletap transformstart transform transformend dragstart drag dragend swipe release', function (evt) {
+    .bind('transformstart transform transformend', function (evt) {
+        log('HAMMER', evt);
     })
     ;
-    */
 
 });
 
