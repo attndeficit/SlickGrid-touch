@@ -341,12 +341,17 @@
                 var width = $(window).width();
                 var wide = (width > 768); // ipad orientation narrow / wide
                 // Hide or show the last two columns, based on the layout.
-                // XXX a little rough edge.... that we drop the current resizing
-                // info. We could keep it with just a bit smarter code.
+                // XXX this is a little rough... we'd need to be smarter here
+                // to conserve our current columns sizes and order.
                 if (wide) {
-                    columns = origColumns.slice();
+                    if (columns.length < 5) {
+                        columns.push(origColumns[3]);
+                        columns.push(origColumns[4]);
+                    }
                 } else {
-                    columns = origColumns.slice(0, 3);
+                    if (columns.length > 3) {
+                        columns = origColumns.slice(0, 3);
+                    }
                 }
 
                 // and resize.
