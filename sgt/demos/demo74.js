@@ -65,6 +65,7 @@
         {id: "finish", name: "Finish", field: "finish", minWidth: 60,
             editor: Slick.Editors.Date, sortable: true}
     ];
+    var origColumns = columns.slice();
 
     var options = {
         editable: false,
@@ -287,7 +288,6 @@
                 }
                 var column = instance.columnHeader;
                 column.width(instance.oldWidth * scale);
-                log(scale);
                 return false;
             },
             transformend: function (evt) {
@@ -329,6 +329,31 @@
             }
 
 
+        });
+
+        // autoresize columns
+        var timer;
+        $(window).resize(function (evt) {
+            if (timer !== null) {
+                clearTimeout(timer);
+            }
+            timer = setTimeout(function () {
+                var width = $(window).width();
+                var wide = (width > 768); // ipad orientation narrow / wide
+                // Hide or show the last two columns, based on the layout.
+                // XXX a little rough edge.... that we drop the current resizing
+                // info. We could keep it with just a bit smarter code.
+                if (wide) {
+                    columns = origColumns.slice();
+                } else {
+                    columns = origColumns.slice(0, 3);
+                }
+
+                // and resize.
+                grid.setColumns(columns);
+                grid.autosizeColumns();
+                timer = null;
+            }, 400);
         });
 
 
