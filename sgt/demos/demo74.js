@@ -9,7 +9,7 @@ function log () {
     }
     args = _safeConvert(args);
     var repr = JSON.stringify(args);
-    $('#logger').prepend('<p>' + repr + '</p>');
+    $('#logger').prepend('<code>' + repr + '</code><br>');
 }
 
 function _safeConvert(obj) {
@@ -104,6 +104,7 @@ $(".grid-header .ui-icon")
               });
 
 $(function () {
+
     // prepare the data
     for (var i = 0; i < 5000; i++) {
         var d = (data[i] = {});
@@ -219,15 +220,98 @@ $(function () {
     dataView.setFilter(myFilter);
     dataView.endUpdate();
 
-    $('#myGrid .slick-cell').hammer({
-    })
-    //.bind('hold tap doubletap transformstart transform transformend dragstart drag dragend swipe release', function (evt) {
-    .bind('transformstart transform transformend', function (evt) {
-        log('HAMMER', evt);
-    })
-    ;
+    // Enable event translation for the canvas, that is: cells.
+    // We cannot do the same on the headers, yet.
+    // It seems the only way to run this is prevent_default = true.
+    // But this means that we need to wire all touch events we want.
+    $('#myGrid .grid-canvas').hammer({
+        prevent_default: true
+    });
+    
+    // Help debugging by logging all the possible events with the cell information.
+    $('#myGrid').on('hold tap doubletap transformstart transform transformend dragstart drag dragend swipe release', function (evt) {
+        // There is something strange going on with the event targets here. We would like
+        // to get the target (typically a <div class="slick-cell" />), but that does not seem
+        // to be correct. Using originalEvent is good though.
+        var target = evt.originalEvent.target;
+        // Find out the row and column of the cell
+        var cell = grid.getCellFromEvent(evt.originalEvent);
+        log('Touch event:', evt.type, cell);
+    });
+
+
+    var instance = {};    // hold the state of our event workflow.
+    $('#myGrid').on({
+
+        transformstart: function (evt) {
+            // Find out the row and column of the cell
+            var target = evt.originalEvent.target;
+            var cell = grid.getCellFromEvent(evt.originalEvent);
+            // Let's lock the column for the duration of the entire transform.
+            instance.columnIndex = cell.cell;
+            var cHeaders = $('#myGrid .slick-header .slick-header-column');
+            instance.columnHeader = cHeaders.eq(instance.columnIndex);
+            // Start the transform.
+            var column = instance.columnHeader;
+            instance.oldColor = column.css('color');
+            instance.oldWidth = column.width();
+            column.css('color', 'red');
+            return false;
+        },
+        transform: function (evt) {
+            var scale = evt.scale;
+            if (scale == 0) {
+                // why?
+                log ('transform ZERO');
+                return false;
+            }
+            var column = instance.columnHeader;
+            column.width(instance.oldWidth * scale);
+            return false;
+        },
+        transformend: function (evt) {
+            var scale = evt.scale;
+            if (scale == 0) {
+                // why?
+                log ('end ZERO');
+                return false;
+            }
+            var column = instance.columnHeader;
+            var newWidth = instance.oldWidth * scale;
+            column.width(newWidth);
+            column.css('color', instance.oldColor);
+            columns[instance.columnIndex].width = newWidth;
+            grid.setColumns(columns);
+            grid.autosizeColumns();
+            return false;
+        },
+
+
+        // So now we need to translate the rest of the touch events.
+        // This seems to be the only way hammer.js works correctly for us,
+        // and it actually creates a clean situation. Everything is in our
+        // control and we need to be explicit with the touch events.
+        // No nasty magic or side effects.
+
+        // A tap event will do a click.
+        tap: function (evt) {
+            var target = evt.originalEvent.target;
+            $(target).click();
+            return false;
+        },
+
+        // A double tap will alert something. Right now let's just
+        // do an alert.
+        doubletap: function (evt) {
+            var cell = grid.getCellFromEvent(evt.originalEvent);
+            alert('Double-tapped cell (' + cell.row + ', ' + cell.cell + ')');
+            return false;
+        }
+
+
+    });
+
 
 });
-
 
 })(jQuery);
