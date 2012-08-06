@@ -237,6 +237,9 @@
         dataView.setFilter(myFilter);
         dataView.endUpdate();
 
+        // autosize first
+        grid.autosizeColumns();
+
         // Enable event translation for the canvas, that is: cells.
         // We cannot do the same on the headers, yet.
         // It seems the only way to run this is prevent_default = true.
@@ -284,6 +287,7 @@
                 }
                 var column = instance.columnHeader;
                 column.width(instance.oldWidth * scale);
+                log(scale);
                 return false;
             },
             transformend: function (evt) {
