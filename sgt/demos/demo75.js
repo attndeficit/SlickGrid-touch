@@ -65,6 +65,39 @@
         {id: "finish", name: "Finish", field: "finish", minWidth: 60,
             editor: Slick.Editors.Date, sortable: true}
     ];
+
+    var i;
+    for (i = 0; i < columns.length; i++) {
+        columns[i].header = {
+            menu: {
+                items: [
+                    {
+                        iconImage: "../images/sort-asc.gif",
+                        title: "Sort Ascending",
+                        command: "sort-asc"
+                    },
+                    {
+                        iconImage: "../images/sort-desc.gif",
+                        title: "Sort Descending",
+                        command: "sort-desc"
+                    },
+                    {
+                        title: "Hide Column",
+                        command: "hide",
+                        disabled: true,
+                        tooltip: "Can't hide this column"
+                    },
+                    {
+                        iconCssClass: "icon-help",
+                        title: "Help",
+                        command: "help"
+                    }
+                ]
+            }
+        };
+    }
+
+
     var origColumns = columns.slice();
 
     var options = {
@@ -361,6 +394,20 @@
             }, 400);
         });
 
+        var headerMenuPlugin = new Slick.Plugins.HeaderMenu({});
+        headerMenuPlugin.onBeforeMenuShow.subscribe(function (e, args) {
+            var menu = args.menu;
+            // We can add or modify the menu here, or cancel it by returning false.
+            var i = menu.items.length;
+            menu.items.push({
+                title: "Menu item " + i,
+                command: "item" + i
+            });
+        });
+        headerMenuPlugin.onCommand.subscribe(function (e, args) {
+            alert("Command: " + args.command);
+        });
+        grid.registerPlugin(headerMenuPlugin); 
 
     });
 
