@@ -48,6 +48,40 @@
         }
     }
 
+
+    function locateCell(grid, evt) {
+        // There is something strange going on with the event targets here. We would like
+        // to get the target (typically a <div class="slick-cell" />), but that does not seem
+        // to be correct. Using originalEvent is good though.
+        var realEvt = evt.originalEvent || evt;
+        var target = $(realEvt.target);
+        var res;
+        if (target.parent().is('.slick-header-columns')) {
+            var column = target.index();
+            res = {
+                type: 'header',
+                column: column
+            };
+        } else {
+            // Find out the row and column of the cell
+            var cell = grid.getCellFromEvent(realEvt);
+            if (cell !== null) {
+                // We are in the canvas.
+                res = {
+                    type: 'cell',
+                    row: cell.row,
+                    column: cell.cell
+                };
+            } else {
+                // We are not in the canvas.
+                res = {
+                    type: 'outside'
+                };
+            }
+        }
+        return res;
+    }
+
     var dataView;
     var grid;
     var data = [];
@@ -57,13 +91,13 @@
             resizable: false, selectable: false},
         {id: "title", name: "Title", field: "title", width: 120, minWidth: 120,
             cssClass: "cell-title", editor: Slick.Editors.Text,
-            validator: requiredFieldValidator, sortable: true},
+            validator: requiredFieldValidator},
         {id: "duration", name: "Duration", field: "duration",
-            editor: Slick.Editors.Text, sortable: true},
+            editor: Slick.Editors.Text},
         {id: "start", name: "Start", field: "start", minWidth: 60,
-            editor: Slick.Editors.Date, sortable: true},
+            editor: Slick.Editors.Date},
         {id: "finish", name: "Finish", field: "finish", minWidth: 60,
-            editor: Slick.Editors.Date, sortable: true}
+            editor: Slick.Editors.Date}
     ];
 
     var i;
@@ -72,12 +106,12 @@
             menu: {
                 items: [
                     {
-                        iconImage: "../images/sort-asc.gif",
+                        iconImage: "../../images/sort-asc.gif",
                         title: "Sort Ascending",
                         command: "sort-asc"
                     },
                     {
-                        iconImage: "../images/sort-desc.gif",
+                        iconImage: "../../images/sort-desc.gif",
                         title: "Sort Descending",
                         command: "sort-desc"
                     },
@@ -165,8 +199,8 @@
         grid = new Slick.Grid("#myGrid", dataView, columns, options);
         grid.setSelectionModel(new Slick.RowSelectionModel());
 
-        var columnpicker = new Slick.Controls.ColumnPicker(
-                columns, grid, options);
+        //var columnpicker = new Slick.Controls.ColumnPicker(
+        //        columns, grid, options);
 
 
         // move the filter panel defined in a hidden div into grid top panel
@@ -285,24 +319,13 @@
         // Help debugging by logging all the possible events with the cell information.
         $('#myGrid').on('hold tap doubletap transformstart transform transformend' +
                     'dragstart drag dragend swipe release', function (evt) {
-            // There is something strange going on with the event targets here. We would like
-            // to get the target (typically a <div class="slick-cell" />), but that does not seem
-            // to be correct. Using originalEvent is good though.
-            var realEvt = evt.originalEvent || evt;
-            var target = $(realEvt.target);
-            if (target.parent().is('.slick-header-columns')) {
-                var column = target.index();
-                log('Touch event (header):', evt.type, column);
+            var locate = locateCell(grid, evt);
+            if (locate.type == 'header') {
+                log('Touch event (header):', evt.type, locate.column);
+            } else if (locate.type == 'cell') {
+                log('Touch event (cell):', evt.type, locate.row, locate.column);
             } else {
-                // Find out the row and column of the cell
-                var cell = grid.getCellFromEvent(realEvt);
-                if (cell !== null) {
-                    // We are in the canvas.
-                    log('Touch event (cell):', evt.type, cell);
-                } else {
-                    // We are in the canvas.
-                    log('Touch event (outside):', evt.type);
-                }
+                log('Touch event (outside):', evt.type);
             }
         });
 
@@ -368,8 +391,12 @@
             // A double tap will alert something. Right now let's just
             // do an alert.
             doubletap: function (evt) {
-                var cell = grid.getCellFromEvent(evt.originalEvent);
-                alert('Double-tapped cell (' + cell.row + ', ' + cell.cell + ')');
+                var locate = locateCell(grid, evt);
+                if (locate.type == 'header') {
+                    alert('Double-tapped header: ' + locate.column);
+                } else if (locate.type == 'cell') {
+                    alert('Double-tapped cell: ' + locate.row + ':' + locate.column);
+                }
                 return false;
             }
 
