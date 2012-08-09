@@ -105,7 +105,8 @@
         enableAddRow: true,
         enableCellNavigation: true,
         asyncEditorLoading: true,
-        forceFitColumns: false
+        forceFitColumns: false,
+        enableColumnReorder: false
     };
 
     var sortcol = "title";
@@ -135,14 +136,14 @@
     }
 
 
-    $(".grid-header .ui-icon")
-        .addClass("ui-state-default ui-corner-all")
-        .mouseover(function (e) {
-            $(e.target).addClass("ui-state-hover");
-        })
-        .mouseout(function (e) {
-            $(e.target).removeClass("ui-state-hover");
-        });
+    //$(".grid-header .ui-icon")
+    //    .addClass("ui-state-default ui-corner-all")
+    //    .mouseover(function (e) {
+    //        $(e.target).addClass("ui-state-hover");
+    //    })
+    //    .mouseout(function (e) {
+    //        $(e.target).removeClass("ui-state-hover");
+    //    });
 
     $(function () {
 
@@ -274,11 +275,10 @@
         // autosize first
         grid.autosizeColumns();
 
-        // Enable event translation for the canvas, that is: cells.
-        // We cannot do the same on the headers, yet.
+        // Enable event translation for both the canvas (cells), and the headers.
         // It seems the only way to run this is prevent_default = true.
         // But this means that we need to wire all touch events we want.
-        $('#myGrid .grid-canvas').hammer({
+        $('#myGrid').hammer({
             prevent_default: true
         });
         
@@ -288,10 +288,22 @@
             // There is something strange going on with the event targets here. We would like
             // to get the target (typically a <div class="slick-cell" />), but that does not seem
             // to be correct. Using originalEvent is good though.
-            var target = evt.originalEvent.target;
-            // Find out the row and column of the cell
-            var cell = grid.getCellFromEvent(evt.originalEvent);
-            log('Touch event:', evt.type, cell);
+            var realEvt = evt.originalEvent || evt;
+            var target = $(realEvt.target);
+            if (target.parent().is('.slick-header-columns')) {
+                var column = target.index();
+                log('Touch event (header):', evt.type, column);
+            } else {
+                // Find out the row and column of the cell
+                var cell = grid.getCellFromEvent(realEvt);
+                if (cell !== null) {
+                    // We are in the canvas.
+                    log('Touch event (cell):', evt.type, cell);
+                } else {
+                    // We are in the canvas.
+                    log('Touch event (outside):', evt.type);
+                }
+            }
         });
 
 
