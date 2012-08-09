@@ -85,6 +85,8 @@
     var dataView;
     var grid;
     var data = [];
+    // it seems that sortable=false must be used. Otherwise the
+    // traditional sorting kicks in and shadows the menu headers.
     var columns = [
         {id: "sel", name: "#", field: "num", behavior: "select",
             cssClass: "cell-selection", width: 40, cannotTriggerInsert: true,
@@ -244,6 +246,7 @@
         grid.onSort.subscribe(function (e, args) {
             sortdir = args.sortAsc ? 1 : -1;
             sortcol = args.sortCol.field;
+            log('onSort', sortdir, sortcol);
 
             dataView.sort(comparer, args.sortAsc);
         });
@@ -433,7 +436,9 @@
             }, 400);
         });
 
-        var headerMenuPlugin = new Slick.Plugins.HeaderMenu({});
+        var headerMenuPlugin = new Slick.Plugins.HeaderMenu({
+            buttonImage: '../../images/down.gif'
+        });
         headerMenuPlugin.onBeforeMenuShow.subscribe(function (e, args) {
             var menu = args.menu;
             // We can add or modify the menu here, or cancel it by returning false.
@@ -443,8 +448,17 @@
                 command: "item" + i
             });
         });
+        // hook up the sorting menu commands into the grid's sorting mechanism.
         headerMenuPlugin.onCommand.subscribe(function (e, args) {
-            alert("Command: " + args.command);
+            if (args.command.substr(0, 5) == 'sort-') {
+                args.grid.onSort.notify({
+                    grid: args.grid,
+                    multiColumnSort: false,
+                    sortCol: args.column,
+                    sortAsc: args.command.substr(5) == 'asc'
+                }, e, args.grid);
+            }
+            // TODO ... perhaps, do something visually?
         });
         grid.registerPlugin(headerMenuPlugin); 
 
