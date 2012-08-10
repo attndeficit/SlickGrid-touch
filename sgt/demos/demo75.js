@@ -85,37 +85,42 @@
     var dataView;
     var grid;
     var data = [];
-    // it seems that sortable=false must be used. Otherwise the
-    // traditional sorting kicks in and shadows the menu headers.
     var columns = [
         {id: "sel", name: "#", field: "num", behavior: "select",
             cssClass: "cell-selection", width: 40, cannotTriggerInsert: true,
             resizable: false, selectable: false},
         {id: "title", name: "Title", field: "title", width: 120, minWidth: 120,
             cssClass: "cell-title", editor: Slick.Editors.Text,
-            validator: requiredFieldValidator},
+            validator: requiredFieldValidator, sortable: true},
         {id: "duration", name: "Duration", field: "duration",
-            editor: Slick.Editors.Text},
+            editor: Slick.Editors.Text, sortable: true},
         {id: "start", name: "Start", field: "start", minWidth: 60,
-            editor: Slick.Editors.Date},
+            editor: Slick.Editors.Date, sortable: true},
         {id: "finish", name: "Finish", field: "finish", minWidth: 60,
-            editor: Slick.Editors.Date}
+            editor: Slick.Editors.Date, sortable: true}
     ];
 
     var i;
     for (i = 0; i < columns.length; i++) {
+        // it seems that sortable=false must be used. Otherwise the
+        // traditional sorting kicks in and shadows the menu headers.
+        // We remove sortable for this reason and add the menu items if needed.
+        var sortable = columns[i].sortable;
+        columns[i].sortable = false;
         columns[i].header = {
             menu: {
                 items: [
                     {
                         iconImage: "../../images/sort-asc.gif",
                         title: "Sort Ascending",
-                        command: "sort-asc"
+                        command: "sort-asc",
+                        disabled: ! sortable
                     },
                     {
                         iconImage: "../../images/sort-desc.gif",
                         title: "Sort Descending",
-                        command: "sort-desc"
+                        command: "sort-desc",
+                        disabled: ! sortable
                     },
                     {
                         title: "Hide Column",
