@@ -421,15 +421,15 @@
             // This seems to be the only way hammer.js works correctly for us,
             // and it actually creates a clean situation. Everything is in our
             // control and we need to be explicit with the touch events.
-            // No nasty magic or side effects.
 
             // A tap event will do a click.
+            // This is important, also to prevent the menus if tapped outside.
             tap: function (evt) {
                 var target = evt.originalEvent.target;
-                $(target).click();
+                $(target).mousedown();
                 return false;
             },
-
+  
             // A double tap will alert something. Right now let's just
             // do an alert.
             doubletap: function (evt) {
@@ -446,8 +446,8 @@
                 return false;
             }
 
-
         });
+
 
         // autoresize columns
         var timer;
