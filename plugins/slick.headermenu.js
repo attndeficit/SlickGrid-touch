@@ -265,6 +265,9 @@
       "init": init,
       "destroy": destroy,
 
+      "showMenu": showMenu,
+      "hideMenu": hideMenu,
+
       "onBeforeMenuShow": new Slick.Event(),
       "onCommand": new Slick.Event()
     });

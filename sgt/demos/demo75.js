@@ -59,6 +59,7 @@
         if (target.parent().is('.slick-header-columns')) {
             var column = target.index();
             res = {
+                target: target,
                 type: 'header',
                 column: column
             };
@@ -68,6 +69,7 @@
             if (cell !== null) {
                 // We are in the canvas.
                 res = {
+                    target: target,
                     type: 'cell',
                     row: cell.row,
                     column: cell.cell
@@ -317,6 +319,38 @@
         // autosize first
         grid.autosizeColumns();
 
+
+        // header menus
+        var headerMenuPlugin = new Slick.Plugins.HeaderMenu({
+            buttonImage: '../../images/down.gif'
+        });
+        headerMenuPlugin.onBeforeMenuShow.subscribe(function (e, args) {
+            var menu = args.menu;
+            // We can add or modify the menu here, or cancel it by returning false.
+            var i = menu.items.length;
+            menu.items.push({
+                title: "Menu item " + i,
+                command: "item" + i
+            });
+        });
+        // hook up the sorting menu commands into the grid's sorting mechanism.
+        headerMenuPlugin.onCommand.subscribe(function (e, args) {
+            if (args.command.substr(0, 5) == 'sort-') {
+                args.grid.onSort.notify({
+                    grid: args.grid,
+                    multiColumnSort: false,
+                    sortCol: args.column,
+                    sortAsc: args.command.substr(5) == 'asc'
+                }, e, args.grid);
+            }
+            // TODO ... perhaps, do something visually?
+        });
+        grid.registerPlugin(headerMenuPlugin); 
+
+
+
+
+
         // Enable event translation for both the canvas (cells), and the headers.
         // It seems the only way to run this is prevent_default = true.
         // But this means that we need to wire all touch events we want.
@@ -401,7 +435,11 @@
             doubletap: function (evt) {
                 var locate = locateCell(grid, evt);
                 if (locate.type == 'header') {
-                    alert('Double-tapped header: ' + locate.column);
+                    log('Double-tapped header: ' + locate.column);
+                    // showMenu must be called on the button....
+                    var button = locate.target.find('.slick-header-menubutton');
+                    headerMenuPlugin.showMenu.call(button, evt);
+
                 } else if (locate.type == 'cell') {
                     alert('Double-tapped cell: ' + locate.row + ':' + locate.column);
                 }
@@ -440,32 +478,6 @@
                 timer = null;
             }, 400);
         });
-
-        var headerMenuPlugin = new Slick.Plugins.HeaderMenu({
-            buttonImage: '../../images/down.gif'
-        });
-        headerMenuPlugin.onBeforeMenuShow.subscribe(function (e, args) {
-            var menu = args.menu;
-            // We can add or modify the menu here, or cancel it by returning false.
-            var i = menu.items.length;
-            menu.items.push({
-                title: "Menu item " + i,
-                command: "item" + i
-            });
-        });
-        // hook up the sorting menu commands into the grid's sorting mechanism.
-        headerMenuPlugin.onCommand.subscribe(function (e, args) {
-            if (args.command.substr(0, 5) == 'sort-') {
-                args.grid.onSort.notify({
-                    grid: args.grid,
-                    multiColumnSort: false,
-                    sortCol: args.column,
-                    sortAsc: args.command.substr(5) == 'asc'
-                }, e, args.grid);
-            }
-            // TODO ... perhaps, do something visually?
-        });
-        grid.registerPlugin(headerMenuPlugin); 
 
     });
 
