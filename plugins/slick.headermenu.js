@@ -224,10 +224,17 @@
 
 
       // Position the menu.
+      // Do not let it go out of the grid area.
+      var $header = $menuButton.closest('.slick-header');
+      var menuRight = $(this).offset().left + $menu.width();
+      var headerRight = $header.offset().left + $header.width();
+      var offset = 0;
+      if (menuRight > headerRight) {
+          offset = headerRight - menuRight;
+      }
       $menu
         .css("top", $(this).offset().top + $(this).height())
-        .css("left", $(this).offset().left);
-
+        .css("left", $(this).offset().left + offset);
 
       // Mark the header as active to keep the highlighting.
       $activeHeaderColumn = $menuButton.closest(".slick-header-column");

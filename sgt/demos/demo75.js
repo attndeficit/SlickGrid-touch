@@ -348,9 +348,6 @@
         grid.registerPlugin(headerMenuPlugin); 
 
 
-
-
-
         // Enable event translation for both the canvas (cells), and the headers.
         // It seems the only way to run this is prevent_default = true.
         // But this means that we need to wire all touch events we want.
