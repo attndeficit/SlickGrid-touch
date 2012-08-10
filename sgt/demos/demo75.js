@@ -421,24 +421,27 @@
 
             // A tap event will do a click.
             // This is important, also to prevent the menus if tapped outside.
-            tap: function (evt) {
-                var target = evt.originalEvent.target;
-                $(target).mousedown();
-                return false;
-            },
+            //tap: function (evt) {
+            //    var target = evt.originalEvent.target;
+            //    $(target).mousedown();
+            //    return false;
+            //},
   
-            // A double tap will alert something. Right now let's just
-            // do an alert.
-            doubletap: function (evt) {
+            tap: function (evt) {
                 var locate = locateCell(grid, evt);
                 if (locate.type == 'header') {
-                    log('Double-tapped header: ' + locate.column);
+                    log('Single-tapped header: ' + locate.column);
                     // showMenu must be called on the button....
                     var button = locate.target.find('.slick-header-menubutton');
                     headerMenuPlugin.showMenu.call(button, evt);
 
-                } else if (locate.type == 'cell') {
-                    alert('Double-tapped cell: ' + locate.row + ':' + locate.column);
+                } else {
+
+                    var target = evt.originalEvent.target;
+                    $(target).mousedown();
+
+                //} else if (locate.type == 'cell') {
+                    //alert('Double-tapped cell: ' + locate.row + ':' + locate.column);
                 }
                 return false;
             }
