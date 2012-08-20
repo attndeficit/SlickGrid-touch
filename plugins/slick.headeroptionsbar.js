@@ -92,7 +92,12 @@
 
       $(_grid).optionsbar({
             content: function () {
-                return '<p>CONTENT</p>';
+                var c = '<div class="btn-group">' +
+                             '<a class="btn btn-inverse"><</a>' +
+                             '<a class="btn btn-inverse">></a>' +
+                             '<a class="btn btn-inverse">Resize</a>' +
+                        '</div>';
+                return c;
             }
       });
       optionsBar = $(_grid).data('optionsbar');

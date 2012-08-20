@@ -42,7 +42,7 @@
       var $tip = this.tip()
         , content = this.getContent()
 
-      $tip.find('.optionsbar-content > *')[this.isHTML(content) ? 'html' : 'text'](content)
+      $tip.find('.optionsbar-inner')[this.isHTML(content) ? 'html' : 'text'](content)
 
       $tip.removeClass('fade top bottom left right in')
     }
@@ -95,7 +95,7 @@
     trigger: 'manual'
   , placement: 'bottom'
   , content: ''
-  , template: '<div class="optionsbar"><div class="arrow"></div><div class="optionsbar-inner"><div class="optionsbar-content"><p></p></div></div></div>'
+  , template: '<div class="optionsbar"><div class="arrow"></div><div class="optionsbar-inner"></div></div>'
   })
 
 }(window.jQuery);
