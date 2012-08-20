@@ -69,6 +69,8 @@
    * @class Slick.Plugins.HeaderButtons
    * @constructor
    */
+
+
   function HeaderOptionsBar(options) {
     var _grid;
     var _self = this;
@@ -79,7 +81,7 @@
     };
     var $menu;
     var $activeHeaderColumn;
-
+    var optionsBar;
 
     function init(grid) {
       options = $.extend(true, {}, _defaults, options);
@@ -88,17 +90,29 @@
         .subscribe(_grid.onHeaderRendered, handleHeaderRendered)
         .subscribe(_grid.onBeforeHeaderDestroy, handleBeforeHeaderDestroy);
 
+      $(_grid).optionsbar({
+            content: function () {
+                return '<p>CONTENT</p>';
+            }
+      });
+      optionsBar = $(_grid).data('optionsbar');
+
       // Force the grid to re-render the header now that the events are hooked up.
       _grid.setColumns(_grid.getColumns());
 
       // Hide the menu on outside click.
       $(document.body).bind("mousedown", handleBodyMouseDown);
+
+
     }
 
 
     function destroy() {
       _handler.unsubscribeAll();
       $(document.body).unbind("mousedown", handleBodyMouseDown);
+
+      optionsBar.destroy();
+
     }
 
 
@@ -141,8 +155,19 @@
         }
 
         $el
-          .bind("click", showMenu)
           .appendTo(args.headerNode);
+
+        $(args.headerNode)
+            .hammer({
+                prevent_default: true
+            });
+        $(args.headerNode).on({
+            tap: function (evt) {
+                return showMenu.call($el[0], evt);
+            }
+        });
+
+
       }
     }
 
@@ -157,6 +182,20 @@
 
 
     function showMenu(e) {
+
+      var $menuButton = $(this);
+      var menu = $menuButton.data("menu");
+      var columnDef = $menuButton.data("column");
+
+
+        optionsBar.setElement($menuButton);
+        optionsBar.show();
+
+    }
+    
+    
+    function _XXX_showMenu(e) {
+
       var $menuButton = $(this);
       var menu = $menuButton.data("menu");
       var columnDef = $menuButton.data("column");
@@ -232,6 +271,11 @@
       $activeHeaderColumn = $menuButton.closest(".slick-header-column");
       $activeHeaderColumn
         .addClass("slick-header-column-active");
+
+
+
+
+
     }
 
 

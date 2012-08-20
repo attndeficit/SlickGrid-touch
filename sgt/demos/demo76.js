@@ -39,6 +39,8 @@
         $('#logger').prepend('<code>' + repr + '</code><br>');
     }
 
+    window.log = log;
+
     function requiredFieldValidator(value) {
         if (value === null || value === undefined || !value.length) {
             return {valid: false, msg: "This is a required field"};
@@ -433,7 +435,7 @@
                     log('Single-tapped header: ' + locate.column);
                     // showMenu must be called on the button....
                     var button = locate.target.find('.slick-header-menubutton');
-                    headerMenuPlugin.showMenu.call(button, evt);
+                    ////////headerMenuPlugin.showMenu.call(button, evt);
 
                 } else {
 
