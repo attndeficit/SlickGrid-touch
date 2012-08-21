@@ -99,6 +99,16 @@
       });
       optionsBar = $(_grid).data('optionsbar');
 
+      $('body').on('command', function (evt, options) {
+            var target = $(evt.target);
+            var columnDef = target.data("column");
+            _self.onCommand.notify({
+                "grid": _grid,
+                "column": columnDef,
+                "command": options.command
+            }, evt, _self);
+      });
+
       // Force the grid to re-render the header now that the events are hooked up.
       _grid.setColumns(_grid.getColumns());
 
@@ -213,7 +223,6 @@
       "showMenu": showMenu,
       "hideMenu": hideMenu,
 
-      "onBeforeMenuShow": new Slick.Event(),
       "onCommand": new Slick.Event()
     });
     

@@ -27,14 +27,25 @@
             .hammer({
                 prevent_default: true
             });
-        $('body').on('tap', function (evt) {
-            var realEvt = evt.originalEvent || evt;
-            var target = $(realEvt.target);
-            var tappedInside = self.tip().has(target).length > 0;
-            if (! tappedInside) {
-                self.hide();
+        $('body').on('tap', $.proxy(this.handleTap, this));       
+    }
+
+  , handleTap: function (evt) {
+        var realEvt = evt.originalEvent || evt;
+        var target = $(realEvt.target);
+        var tappedInside = this.tip().has(target).length > 0;
+        if (! tappedInside) {
+            self.hide();
+        } else {
+            // Let's find the command that needs to execute.
+            if (target.is('button')) {
+                var command = target.data('command');
+                this.$element.trigger('command', [{
+                    command: command
+                }]);
             }
-        });
+            return false;
+        }
     }
 
   , setContent: function () {
@@ -55,9 +66,12 @@
           $('<button></button>')
             .text(value.label)
             .attr('class', value.cssClass)
+            .attr('disabled', value.disabled)
+            .attr('data-command', value.command)
             .appendTo(inner);
       });
 
+            //.bind('click', $.proxy(this.handleButtonTap, this))
       $tip.removeClass('fade top bottom left right in')
     }
 

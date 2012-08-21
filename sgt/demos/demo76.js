@@ -314,20 +314,10 @@
 
 
         // header menus
-        var headerMenuPlugin = new Slick.Plugins.HeaderOptionsBar({
-            buttonImage: '../../images/down.gif'
-        });
-        headerMenuPlugin.onBeforeMenuShow.subscribe(function (e, args) {
-            var menu = args.menu;
-            // We can add or modify the menu here, or cancel it by returning false.
-            var i = menu.items.length;
-            menu.items.push({
-                title: "Menu item " + i,
-                command: "item" + i
-            });
+        var headerOptionsPlugin = new Slick.Plugins.HeaderOptionsBar({
         });
         // hook up the sorting menu commands into the grid's sorting mechanism.
-        headerMenuPlugin.onCommand.subscribe(function (e, args) {
+        headerOptionsPlugin.onCommand.subscribe(function (e, args) {
             if (args.command.substr(0, 5) == 'sort-') {
                 args.grid.onSort.notify({
                     grid: args.grid,
@@ -338,7 +328,7 @@
             }
             // TODO ... perhaps, do something visually?
         });
-        grid.registerPlugin(headerMenuPlugin); 
+        grid.registerPlugin(headerOptionsPlugin); 
 
 
         // Enable event translation for both the canvas (cells), and the headers.
