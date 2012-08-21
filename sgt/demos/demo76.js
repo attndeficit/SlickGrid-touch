@@ -111,35 +111,26 @@
         // We remove sortable for this reason and add the menu items if needed.
         var sortable = columns[i].sortable;
         columns[i].sortable = false;
-        columns[i].header = {
-            menu: {
-                items: [
-                    {
-                        iconImage: "../../images/sort-asc.gif",
-                        title: "Sort Ascending",
-                        command: "sort-asc",
-                        disabled: ! sortable
-                    },
-                    {
-                        iconImage: "../../images/sort-desc.gif",
-                        title: "Sort Descending",
-                        command: "sort-desc",
-                        disabled: ! sortable
-                    },
-                    {
-                        title: "Hide Column",
-                        command: "hide",
-                        disabled: true,
-                        tooltip: "Can't hide this column"
-                    },
-                    {
-                        iconCssClass: "icon-help",
-                        title: "Help",
-                        command: "help"
-                    }
-                ]
+        columns[i].optionsbar = [
+            {
+                cssClass: 'btn btn-inverse',
+                label: "<",
+                command: "sort-asc",
+                disabled: ! sortable
+            },
+            {
+                cssClass: 'btn btn-inverse',
+                label: ">",
+                command: "sort-desc",
+                disabled: ! sortable
+            },
+            {
+                cssClass: 'btn btn-inverse',
+                label: "Resize",
+                command: "resize",
+                disabled: true
             }
-        };
+        ];
     }
 
 

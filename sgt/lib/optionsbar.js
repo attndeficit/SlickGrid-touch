@@ -42,7 +42,22 @@
       var $tip = this.tip()
         , content = this.getContent()
 
-      $tip.find('.optionsbar-inner')[this.isHTML(content) ? 'html' : 'text'](content)
+      ;
+
+      var inner = $tip.find('.optionsbar-inner');
+      var defaults = {
+          label: '',
+          cssClass: 'btn'
+      };
+      
+      inner.empty();
+      $.each(content, function (index, value) {
+          value = $.extend(true, {}, defaults, value); 
+          $('<button></button>')
+            .text(value.label)
+            .attr('class', value.cssClass)
+            .appendTo(inner);
+      });
 
       $tip.removeClass('fade top bottom left right in')
     }
@@ -94,8 +109,8 @@
   $.fn.optionsbar.defaults = $.extend({} , $.fn.tooltip.defaults, {
     trigger: 'manual'
   , placement: 'bottom'
-  , content: ''
-  , template: '<div class="optionsbar"><div class="arrow"></div><div class="optionsbar-inner"></div></div>'
+  , content: []
+  , template: '<div class="optionsbar"><div class="arrow"></div><div class="optionsbar-inner btn-group"></div></div>'
   })
 
 }(window.jQuery);

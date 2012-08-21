@@ -92,12 +92,9 @@
 
       $(_grid).optionsbar({
             content: function () {
-                var c = '<div class="btn-group">' +
-                             '<a class="btn btn-inverse"><</a>' +
-                             '<a class="btn btn-inverse">></a>' +
-                             '<a class="btn btn-inverse">Resize</a>' +
-                        '</div>';
-                return c;
+                var $menuButton = $(this);
+                var buttons = $menuButton.data('buttons');
+                return buttons;
             }
       });
       optionsBar = $(_grid).data('optionsbar');
@@ -106,7 +103,7 @@
       _grid.setColumns(_grid.getColumns());
 
       // Hide the menu on outside click.
-      $(document.body).bind("mousedown", handleBodyMouseDown);
+      //$(document.body).bind("mousedown", handleBodyMouseDown);
 
 
     }
@@ -114,7 +111,7 @@
 
     function destroy() {
       _handler.unsubscribeAll();
-      $(document.body).unbind("mousedown", handleBodyMouseDown);
+      //$(document.body).unbind("mousedown", handleBodyMouseDown);
 
       optionsBar.destroy();
 
@@ -139,26 +136,18 @@
 
     function handleHeaderRendered(e, args) {
       var column = args.column;
-      var menu = column.header && column.header.menu;
-
-      if (menu) {
+      var buttons = column.optionsbar;
+      if (buttons && buttons.length > 0) {
         var $el = $("<div></div>")
           .addClass("slick-header-menubutton")
           .data("column", column)
-          .data("menu", menu);
-
+          .data("buttons", buttons);
         if (options.buttonCssClass) {
           $el.addClass(options.buttonCssClass);
         }
-
         if (options.buttonImage) {
           $el.css("background-image", "url(" + options.buttonImage + ")");
         }
-
-        if (menu.tooltip) {
-          $el.attr("title", menu.tooltip);
-        }
-
         $el
           .appendTo(args.headerNode);
 
@@ -171,8 +160,6 @@
                 return showMenu.call($el[0], evt);
             }
         });
-
-
       }
     }
 
@@ -187,78 +174,20 @@
 
 
     function showMenu(e) {
-
       var $menuButton = $(this);
-      var menu = $menuButton.data("menu");
-      var columnDef = $menuButton.data("column");
+      //var columnDef = $menuButton.data("column");
+      optionsBar.setElement($menuButton);
+      optionsBar.show();
 
-
-        optionsBar.setElement($menuButton);
-        optionsBar.show();
+      // Mark the header as active to keep the highlighting.
+      $activeHeaderColumn = $menuButton.closest(".slick-header-column");
+      $activeHeaderColumn
+        .addClass("slick-header-column-active");
 
     }
     
     
-    function _XXX_showMenu(e) {
-
-      var $menuButton = $(this);
-      var menu = $menuButton.data("menu");
-      var columnDef = $menuButton.data("column");
-
-      // Let the user modify the menu or cancel altogether,
-      // or provide alternative menu implementation.
-      if (_self.onBeforeMenuShow.notify({
-          "grid": _grid,
-          "column": columnDef,
-          "menu": menu
-        }, e, _self) == false) {
-        return;
-      }
-
-
-      if (!$menu) {
-        $menu = $("<div class='slick-header-menu'></div>")
-          .appendTo(document.body);
-      }
-      $menu.empty();
-
-
-      // Construct the menu items.
-      for (var i = 0; i < menu.items.length; i++) {
-        var item = menu.items[i];
-
-        var $li = $("<div class='slick-header-menuitem'></div>")
-          .data("command", item.command || '')
-          .data("column", columnDef)
-          .data("item", item)
-          .bind("click", handleMenuItemClick)
-          .appendTo($menu);
-
-        if (item.disabled) {
-          $li.addClass("slick-header-menuitem-disabled");
-        }
-
-        if (item.tooltip) {
-          $li.attr("title", item.tooltip);
-        }
-
-        var $icon = $("<div class='slick-header-menuicon'></div>")
-          .appendTo($li);
-
-        if (item.iconCssClass) {
-          $icon.addClass(item.iconCssClass);
-        }
-
-        if (item.iconImage) {
-          $icon.css("background-image", "url(" + item.iconImage + ")");
-        }
-
-        $("<span class='slick-header-menucontent'></span>")
-          .text(item.title)
-          .appendTo($li);
-      }
-
-
+    /*
       // Position the menu.
       // Do not let it go out of the grid area.
       var $header = $menuButton.closest('.slick-header');
@@ -272,42 +201,8 @@
         .css("top", $(this).offset().top + $(this).height())
         .css("left", $(this).offset().left + offset);
 
-      // Mark the header as active to keep the highlighting.
-      $activeHeaderColumn = $menuButton.closest(".slick-header-column");
-      $activeHeaderColumn
-        .addClass("slick-header-column-active");
+    */
 
-
-
-
-
-    }
-
-
-    function handleMenuItemClick(e) {
-      var command = $(this).data("command");
-      var columnDef = $(this).data("column");
-      var item = $(this).data("item");
-
-      if (item.disabled) {
-        return;
-      }
-
-      hideMenu();
-
-      if (command != null && command != '') {
-        _self.onCommand.notify({
-            "grid": _grid,
-            "column": columnDef,
-            "command": command,
-            "item": item
-          }, e, _self);
-      }
-
-      // Stop propagation so that it doesn't register as a header click event.
-      e.preventDefault();
-      e.stopPropagation();
-    }
 
     $.extend(this, {
       "init": init,
