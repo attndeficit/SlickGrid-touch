@@ -31,6 +31,7 @@
     }
 
   , handleTap: function (evt) {
+        var self = this;
         var realEvt = evt.originalEvent || evt;
         var target = $(realEvt.target);
         var tappedInside = this.tip().has(target).length > 0;
@@ -43,6 +44,8 @@
                 this.$element.trigger('command', [{
                     command: command
                 }]);
+                // We also hide the options bar.
+                self.hide();
             }
             return false;
         }
