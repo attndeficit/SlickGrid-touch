@@ -420,8 +420,9 @@
             //    return false;
             //},
   
-            tap: function (evt) {
+            XXXtap: function (evt) {
                 var locate = locateCell(grid, evt);
+                log('XXXtap??', locate);
                 if (locate.type == 'header') {
                     log('Single-tapped header: ' + locate.column);
                     // showMenu must be called on the button....
@@ -436,7 +437,7 @@
                 //} else if (locate.type == 'cell') {
                     //alert('Double-tapped cell: ' + locate.row + ':' + locate.column);
                 }
-                return false;
+                //return false;
             }
 
         });

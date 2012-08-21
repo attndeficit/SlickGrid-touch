@@ -28,7 +28,6 @@
                 prevent_default: true
             });
         $('body').on('tap', function (evt) {
-            // XXX ???
             var realEvt = evt.originalEvent || evt;
             var target = $(realEvt.target);
             var tappedInside = self.tip().has(target).length > 0;

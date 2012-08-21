@@ -157,7 +157,9 @@
             });
         $(args.headerNode).on({
             tap: function (evt) {
-                return showMenu.call($el[0], evt);
+                showMenu.call($el[0], evt);
+                // important to prevent this, or else it would hide itself immediately.
+                return false;
             }
         });
       }
