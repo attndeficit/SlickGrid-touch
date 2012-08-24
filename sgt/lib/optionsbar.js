@@ -28,6 +28,7 @@
                 prevent_default: true
             });
         $('body').on('tap', $.proxy(this.handleTap, this));       
+        this.$positionElement = null;
     }
 
   , handleTap: function (evt) {
@@ -79,12 +80,12 @@
     }
 
   , hasContent: function () {
-      return this.getContent()
+      return this.getContent().length > 0;
     }
 
   , getContent: function () {
       var content
-        , $e = this.$element
+        , $e = this.getPositionElement().find('.slick-header-menubutton')
         , o = this.options
 
       content = $e.attr('data-content')
@@ -100,8 +101,22 @@
       return this.$tip
     }
 
-  , setElement: function (el) {
-      this.$element = $(el);
+  , setPositionElement: function (el) {
+      this.$positionElement = $(el);
+      console.log('pos', el);
+    }
+
+  , getPositionElement: function () {
+      return this.$positionElement || this.$element;
+    }
+
+  , getPosition: function (inside) {
+      console.log('getPos');
+      var el = this.getPositionElement();
+      return $.extend({}, (inside ? {top: 0, left: 0} : el.offset()), {
+        width: el[0].offsetWidth
+      , height: el[0].offsetHeight
+      })
     }
 
   })

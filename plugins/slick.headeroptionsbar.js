@@ -172,11 +172,12 @@
     function showMenu(e) {
       var $menuButton = $(this);
       //var columnDef = $menuButton.data("column");
-      optionsBar.setElement($menuButton);
+      $activeHeaderColumn = $menuButton.closest(".slick-header-column");
+
+      optionsBar.setPositionElement($activeHeaderColumn);
       optionsBar.show();
 
       // Mark the header as active to keep the highlighting.
-      $activeHeaderColumn = $menuButton.closest(".slick-header-column");
       $activeHeaderColumn
         .addClass("slick-header-column-active");
 
