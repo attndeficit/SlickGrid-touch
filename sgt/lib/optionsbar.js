@@ -42,7 +42,8 @@
             // Let's find the command that needs to execute.
             if (target.is('button')) {
                 var command = target.data('command');
-                this.$element.trigger('command', [{
+                var el = self.getPositionElement();
+                el.trigger('command', [{
                     command: command
                 }]);
                 // We also hide the options bar.
@@ -103,7 +104,6 @@
 
   , setPositionElement: function (el) {
       this.$positionElement = $(el);
-      console.log('pos', el);
     }
 
   , getPositionElement: function () {
@@ -111,7 +111,6 @@
     }
 
   , getPosition: function (inside) {
-      console.log('getPos');
       var el = this.getPositionElement();
       return $.extend({}, (inside ? {top: 0, left: 0} : el.offset()), {
         width: el[0].offsetWidth

@@ -101,7 +101,8 @@
 
       $('body').on('command', function (evt, options) {
             var target = $(evt.target);
-            var columnDef = target.data("column");
+            var columnDef = target.find('.slick-header-menubutton').data("column");
+
             _self.onCommand.notify({
                 "grid": _grid,
                 "column": columnDef,
