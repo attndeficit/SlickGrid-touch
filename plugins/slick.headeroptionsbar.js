@@ -77,7 +77,7 @@
     var _handler = new Slick.EventHandler();
     var _defaults = {
       buttonCssClass: null,
-      buttonImage: "../images/down.gif"
+      buttonImage: "../../images/down.gif"
     };
     var $menu;
     var $activeHeaderColumn;
@@ -90,25 +90,20 @@
         .subscribe(_grid.onHeaderRendered, handleHeaderRendered)
         .subscribe(_grid.onBeforeHeaderDestroy, handleBeforeHeaderDestroy);
 
-      $(_grid).optionsbar({
+      // XXX Is there a better way to get the grid's element?
+      var $grid = $(_grid.getHeaderRow()).parent().parent();
+
+      $grid.optionsbar({
             content: function () {
                 var $menuButton = $(this);
                 var buttons = $menuButton.data('buttons');
                 return buttons;
             }
       });
-      optionsBar = $(_grid).data('optionsbar');
+      optionsBar = $grid.data('optionsbar');
 
-      $('body').on('command', function (evt, options) {
-            var target = $(evt.target);
-            var columnDef = target.find('.slick-header-menubutton').data("column");
-
-            _self.onCommand.notify({
-                "grid": _grid,
-                "column": columnDef,
-                "command": options.command
-            }, evt, _self);
-      });
+      $grid.on('command.headeroptionsbar', $.proxy(handleCommand, this));
+      $grid.on('hidemenu.headeroptionsbar', $.proxy(handleHideMenu, this));
 
       // Force the grid to re-render the header now that the events are hooked up.
       _grid.setColumns(_grid.getColumns());
@@ -118,15 +113,29 @@
     function destroy() {
       _handler.unsubscribeAll();
       optionsBar.destroy();
+      // XXX Is there a better way to get the grid's element?
+      var $grid = $(_grid.getHeaderRow()).parent().parent();
+      grid.off('command.headeroptionsbar');
+      grid.off('hidemenu.headeroptionsbar');
     }
 
-    function hideMenu() {
-      if ($menu) {
-        $menu.remove();
-        $menu = null;
-        $activeHeaderColumn
-          .removeClass("slick-header-column-active");
-      }
+    function handleCommand(evt, options) {
+        var target = $(evt.target);
+        var columnDef = target.find('.slick-header-menubutton').data("column");
+
+        _self.onCommand.notify({
+            "grid": _grid,
+            "column": columnDef,
+            "command": options.command
+        }, evt, _self);
+    }
+
+    function handleHideMenu(evt, options) {
+        // Remove markup if the menu is hidden.
+        if ($activeHeaderColumn) {
+            $activeHeaderColumn
+                .removeClass("slick-header-column-active");
+        }
     }
 
     function handleHeaderRendered(e, args) {
@@ -171,8 +180,9 @@
 
 
     function showMenu(e) {
+      optionsBar.hide();
+
       var $menuButton = $(this);
-      //var columnDef = $menuButton.data("column");
       $activeHeaderColumn = $menuButton.closest(".slick-header-column");
 
       optionsBar.setPositionElement($activeHeaderColumn);
@@ -207,7 +217,6 @@
       "destroy": destroy,
 
       "showMenu": showMenu,
-      "hideMenu": hideMenu,
 
       "onCommand": new Slick.Event()
     });

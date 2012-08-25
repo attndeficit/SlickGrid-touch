@@ -42,15 +42,24 @@
             // Let's find the command that needs to execute.
             if (target.is('button')) {
                 var command = target.data('command');
+                // We also hide the options bar.
+                self.hide();
+                // And trigger the execution of the command.
                 var el = self.getPositionElement();
                 el.trigger('command', [{
                     command: command
                 }]);
-                // We also hide the options bar.
-                self.hide();
             }
             return false;
         }
+    }
+
+  , hide: function () {
+        $.fn.tooltip.Constructor.prototype.hide.call(this);
+        var el = this.getPositionElement();
+        el.trigger('hidemenu', [{
+            positionElement: el
+        }]);
     }
 
   , setContent: function () {
