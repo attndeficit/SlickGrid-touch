@@ -184,8 +184,10 @@
 
       var $menuButton = $(this);
       $activeHeaderColumn = $menuButton.closest(".slick-header-column");
+      // XXX Is there a better way to get the grid's element?
+      var $grid = $(_grid.getHeaderRow()).parent().parent();
 
-      optionsBar.setPositionElement($activeHeaderColumn);
+      optionsBar.setPositionElement($activeHeaderColumn, $grid);
       optionsBar.show();
 
       // Mark the header as active to keep the highlighting.
@@ -195,23 +197,6 @@
     }
     
     
-    /*
-      // Position the menu.
-      // Do not let it go out of the grid area.
-      var $header = $menuButton.closest('.slick-header');
-      var menuRight = $(this).offset().left + $menu.width();
-      var headerRight = $header.offset().left + $header.width();
-      var offset = 0;
-      if (menuRight > headerRight) {
-          offset = headerRight - menuRight;
-      }
-      $menu
-        .css("top", $(this).offset().top + $(this).height())
-        .css("left", $(this).offset().left + offset);
-
-    */
-
-
     $.extend(this, {
       "init": init,
       "destroy": destroy,
