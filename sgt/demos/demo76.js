@@ -113,19 +113,19 @@
         columns[i].sortable = false;
         columns[i].optionsbar = [
             {
-                cssClass: 'btn',
+                cssClass: 'btn btn-inverse',
                 label: "<",
                 command: "sort-asc",
                 disabled: ! sortable
             },
             {
-                cssClass: 'btn',
+                cssClass: 'btn btn-inverse',
                 label: ">",
                 command: "sort-desc",
                 disabled: ! sortable
             },
             {
-                cssClass: 'btn',
+                cssClass: 'btn btn-inverse',
                 label: "Resize",
                 command: "resize",
                 disabled: true
