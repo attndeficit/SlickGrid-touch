@@ -331,15 +331,16 @@
         grid.registerPlugin(headerOptionsPlugin); 
 
 
+        var $grid = $('#myGrid');
         // Enable event translation for both the canvas (cells), and the headers.
         // It seems the only way to run this is prevent_default = true.
         // But this means that we need to wire all touch events we want.
-        $('#myGrid').hammer({
+        $grid.hammer({
             prevent_default: true
         });
         
         // Help debugging by logging all the possible events with the cell information.
-        $('#myGrid').on('hold tap doubletap transformstart transform transformend' +
+        $grid.on('hold tap doubletap transformstart transform transformend' +
                     'dragstart drag dragend swipe release', function (evt) {
             var locate = locateCell(grid, evt);
             if (locate.type == 'header') {
@@ -351,9 +352,34 @@
             }
         });
 
+        // Cell button bar
+
+        var $canvas = $grid.find('.grid-canvas');
+
+        $canvas.optionsbar({
+            content: [
+                {
+                    cssClass: 'btn btn-inverse',
+                    label: "A",
+                    command: "commandA"
+                },
+                {
+                    cssClass: 'btn btn-inverse',
+                    label: "B",
+                    command: "commandB"
+                }
+            ]
+        });
+        var cellOptionsBar = $canvas.data('optionsbar');
+        $canvas.on('command.demo76', function (evt, options) {
+            log('Cell command:', options.command);
+        
+        });
+
+
 
         var instance = {};    // hold the state of our event workflow.
-        $('#myGrid').on({
+        $grid.on({
 
             transformstart: function (evt) {
                 // Find out the row and column of the cell
@@ -396,38 +422,12 @@
                 return false;
             },
 
-
-            // So now we need to translate the rest of the touch events.
-            // This seems to be the only way hammer.js works correctly for us,
-            // and it actually creates a clean situation. Everything is in our
-            // control and we need to be explicit with the touch events.
-
-            // A tap event will do a click.
-            // This is important, also to prevent the menus if tapped outside.
-            //tap: function (evt) {
-            //    var target = evt.originalEvent.target;
-            //    $(target).mousedown();
-            //    return false;
-            //},
-  
-            XXXtap: function (evt) {
+            doubletap: function (evt) {
                 var locate = locateCell(grid, evt);
-                log('XXXtap??', locate);
-                if (locate.type == 'header') {
-                    log('Single-tapped header: ' + locate.column);
-                    // showMenu must be called on the button....
-                    var button = locate.target.find('.slick-header-menubutton');
-                    ////////headerMenuPlugin.showMenu.call(button, evt);
-
-                } else {
-
-                    var target = evt.originalEvent.target;
-                    $(target).mousedown();
-
-                //} else if (locate.type == 'cell') {
-                    //alert('Double-tapped cell: ' + locate.row + ':' + locate.column);
+                if (locate.type == 'cell') {
+                    cellOptionsBar.setPositionElement(locate.target, $grid);
+                    cellOptionsBar.show();
                 }
-                //return false;
             }
 
         });

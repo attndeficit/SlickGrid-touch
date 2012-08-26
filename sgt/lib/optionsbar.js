@@ -38,7 +38,10 @@
         var target = $(realEvt.target);
         var tappedInside = this.tip().has(target).length > 0;
         if (! tappedInside) {
-            self.hide();
+            // XXX a dirty trick?
+            if (evt.preventMe !== self) {
+                self.hide();
+            }
         } else {
             // Let's find the command that needs to execute.
             if (target.is('button')) {
@@ -51,7 +54,6 @@
                     command: command
                 }]);
             }
-            return false;
         }
     }
 
@@ -72,7 +74,8 @@
       var inner = $tip.find('.optionsbar-inner');
       var defaults = {
           label: '',
-          cssClass: 'btn'
+          cssClass: 'btn',
+          disabled: false
       };
       
       inner.empty();
@@ -131,7 +134,7 @@
       })
     }
 
- , show: function () {
+ , show: function (/*optional*/ evt) {
      // Override from tooltips, for a better positioning
       var $tip
         , inside
@@ -190,9 +193,7 @@
             if (tp.left < left) {
                 offset = left - tp.left;
             } else if (tp.left + tipWidth > left + width) {
-                console.log(tp.left, tipWidth, left, width);
                 offset = left + width - tp.left - tipWidth;
-                console.log(offset);
             }
             
             tp.left += offset;
@@ -206,6 +207,13 @@
           .css(tp)
           .addClass(placement)
           .addClass('in');
+
+
+        if (evt !== undefined) {
+            // XXX a dirty trick?
+            evt.preventMe = this;
+        }
+
 
      }
     }

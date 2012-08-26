@@ -163,7 +163,7 @@
             tap: function (evt) {
                 showMenu.call($el[0], evt);
                 // important to prevent this, or else it would hide itself immediately.
-                return false;
+                //return false;
             }
         });
       }
@@ -180,7 +180,7 @@
 
 
     function showMenu(e) {
-      optionsBar.hide();
+      //optionsBar.hide();
 
       var $menuButton = $(this);
       $activeHeaderColumn = $menuButton.closest(".slick-header-column");
@@ -188,7 +188,7 @@
       var $grid = $(_grid.getHeaderRow()).parent().parent();
 
       optionsBar.setPositionElement($activeHeaderColumn, $grid);
-      optionsBar.show();
+      optionsBar.show(e);
 
       // Mark the header as active to keep the highlighting.
       $activeHeaderColumn
