@@ -1,12 +1,4 @@
 (function ($) {
-  // register namespace
-  $.extend(true, window, {
-    "Slick": {
-      "Plugins": {
-        "HeaderMenu": HeaderMenu
-      }
-    }
-  });
 
 
   /***
@@ -77,17 +69,19 @@
    * @class Slick.Plugins.HeaderButtons
    * @constructor
    */
-  function HeaderMenu(options) {
+
+
+  function HeaderOptionsBar(options) {
     var _grid;
     var _self = this;
     var _handler = new Slick.EventHandler();
     var _defaults = {
       buttonCssClass: null,
-      buttonImage: "../images/down.gif"
+      buttonImage: "../../images/down.gif"
     };
     var $menu;
     var $activeHeaderColumn;
-
+    var optionsBar;
 
     function init(grid) {
       options = $.extend(true, {}, _defaults, options);
@@ -96,61 +90,82 @@
         .subscribe(_grid.onHeaderRendered, handleHeaderRendered)
         .subscribe(_grid.onBeforeHeaderDestroy, handleBeforeHeaderDestroy);
 
+      // XXX Is there a better way to get the grid's element?
+      var $grid = $(_grid.getHeaderRow()).parent().parent();
+
+      $grid.optionsbar({
+            content: function () {
+                var $menuButton = $(this);
+                var buttons = $menuButton.data('buttons');
+                return buttons;
+            }
+      });
+      optionsBar = $grid.data('optionsbar');
+
+      $grid.on('command.headeroptionsbar', $.proxy(handleCommand, this));
+      $grid.on('hidemenu.headeroptionsbar', $.proxy(handleHideMenu, this));
+
       // Force the grid to re-render the header now that the events are hooked up.
       _grid.setColumns(_grid.getColumns());
 
-      // Hide the menu on outside click.
-      $(document.body).bind("mousedown", handleBodyMouseDown);
     }
-
 
     function destroy() {
       _handler.unsubscribeAll();
-      $(document.body).unbind("mousedown", handleBodyMouseDown);
+      optionsBar.destroy();
+      // XXX Is there a better way to get the grid's element?
+      var $grid = $(_grid.getHeaderRow()).parent().parent();
+      grid.off('command.headeroptionsbar');
+      grid.off('hidemenu.headeroptionsbar');
     }
 
+    function handleCommand(evt, options) {
+        var target = $(evt.target);
+        var columnDef = target.find('.slick-header-menubutton').data("column");
 
-    function handleBodyMouseDown(e) {
-      if ($menu && !$.contains($menu[0], e.target)) {
-        hideMenu();
-      }
+        _self.onCommand.notify({
+            "grid": _grid,
+            "column": columnDef,
+            "command": options.command
+        }, evt, _self);
     }
 
-
-    function hideMenu() {
-      if ($menu) {
-        $menu.remove();
-        $menu = null;
-        $activeHeaderColumn
-          .removeClass("slick-header-column-active");
-      }
+    function handleHideMenu(evt, options) {
+        // Remove markup if the menu is hidden.
+        if ($activeHeaderColumn) {
+            $activeHeaderColumn
+                .removeClass("slick-header-column-active");
+        }
     }
 
     function handleHeaderRendered(e, args) {
       var column = args.column;
-      var menu = column.header && column.header.menu;
-
-      if (menu) {
+      var buttons = column.optionsbar;
+      if (buttons && buttons.length > 0) {
         var $el = $("<div></div>")
           .addClass("slick-header-menubutton")
           .data("column", column)
-          .data("menu", menu);
-
+          .data("buttons", buttons);
         if (options.buttonCssClass) {
           $el.addClass(options.buttonCssClass);
         }
-
         if (options.buttonImage) {
           $el.css("background-image", "url(" + options.buttonImage + ")");
         }
-
-        if (menu.tooltip) {
-          $el.attr("title", menu.tooltip);
-        }
-
         $el
-          .bind("click", showMenu)
           .appendTo(args.headerNode);
+
+        $(args.headerNode)
+            .hammer({
+                prevent_default: true
+            });
+        $(args.headerNode).on({
+            tap: function (evt) {
+                showMenu.call($el[0], evt);
+                // important to prevent this, or else it would hide itself immediately.
+                //return false;
+            }
+        });
       }
     }
 
@@ -165,118 +180,42 @@
 
 
     function showMenu(e) {
+      //optionsBar.hide();
+
       var $menuButton = $(this);
-      var menu = $menuButton.data("menu");
-      var columnDef = $menuButton.data("column");
+      $activeHeaderColumn = $menuButton.closest(".slick-header-column");
+      // XXX Is there a better way to get the grid's element?
+      var $grid = $(_grid.getHeaderRow()).parent().parent();
 
-      // Let the user modify the menu or cancel altogether,
-      // or provide alternative menu implementation.
-      if (_self.onBeforeMenuShow.notify({
-          "grid": _grid,
-          "column": columnDef,
-          "menu": menu
-        }, e, _self) == false) {
-        return;
-      }
-
-
-      if (!$menu) {
-        $menu = $("<div class='slick-header-menu'></div>")
-          .appendTo(document.body);
-      }
-      $menu.empty();
-
-
-      // Construct the menu items.
-      for (var i = 0; i < menu.items.length; i++) {
-        var item = menu.items[i];
-
-        var $li = $("<div class='slick-header-menuitem'></div>")
-          .data("command", item.command || '')
-          .data("column", columnDef)
-          .data("item", item)
-          .bind("click", handleMenuItemClick)
-          .appendTo($menu);
-
-        if (item.disabled) {
-          $li.addClass("slick-header-menuitem-disabled");
-        }
-
-        if (item.tooltip) {
-          $li.attr("title", item.tooltip);
-        }
-
-        var $icon = $("<div class='slick-header-menuicon'></div>")
-          .appendTo($li);
-
-        if (item.iconCssClass) {
-          $icon.addClass(item.iconCssClass);
-        }
-
-        if (item.iconImage) {
-          $icon.css("background-image", "url(" + item.iconImage + ")");
-        }
-
-        $("<span class='slick-header-menucontent'></span>")
-          .text(item.title)
-          .appendTo($li);
-      }
-
-
-      // Position the menu.
-      // Do not let it go out of the grid area.
-      var $header = $menuButton.closest('.slick-header');
-      var menuRight = $(this).offset().left + $menu.width();
-      var headerRight = $header.offset().left + $header.width();
-      var offset = 0;
-      if (menuRight > headerRight) {
-          offset = headerRight - menuRight;
-      }
-      $menu
-        .css("top", $(this).offset().top + $(this).height())
-        .css("left", $(this).offset().left + offset);
+      optionsBar.setPositionElement($activeHeaderColumn, $grid);
+      optionsBar.show(e);
 
       // Mark the header as active to keep the highlighting.
-      $activeHeaderColumn = $menuButton.closest(".slick-header-column");
       $activeHeaderColumn
         .addClass("slick-header-column-active");
+
     }
-
-
-    function handleMenuItemClick(e) {
-      var command = $(this).data("command");
-      var columnDef = $(this).data("column");
-      var item = $(this).data("item");
-
-      if (item.disabled) {
-        return;
-      }
-
-      hideMenu();
-
-      if (command != null && command != '') {
-        _self.onCommand.notify({
-            "grid": _grid,
-            "column": columnDef,
-            "command": command,
-            "item": item
-          }, e, _self);
-      }
-
-      // Stop propagation so that it doesn't register as a header click event.
-      e.preventDefault();
-      e.stopPropagation();
-    }
-
+    
+    
     $.extend(this, {
       "init": init,
       "destroy": destroy,
 
       "showMenu": showMenu,
-      "hideMenu": hideMenu,
 
-      "onBeforeMenuShow": new Slick.Event(),
       "onCommand": new Slick.Event()
     });
+    
   }
+
+  // register namespace
+  $.extend(true, window, {
+    "Slick": {
+      "Plugins": {
+        "HeaderOptionsBar": HeaderOptionsBar
+      }
+    }
+  });
+
+
 })(jQuery);

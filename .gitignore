@@ -1,4 +1,6 @@
 .gitk*
 .idea/*
 .*.sw?
+.sw?
 .bzr*
+*.~?~
