@@ -1,10 +1,26 @@
 
-0.1
-===
+Unscheduled
+===========
 
 - Update docs
 
 - Style the example table with Bootstrap table styles
+
+
+0.2, KARL Files Branch
+======================
+
+- Filtering
+
+  - Icon in search box should come from Bootstrap Glyphicons
+
+  - Use Bootstrap's @placeholder support for "Filter title based on
+    word..."
+
+
+
+0.1
+===
 
 - Get an icon on the sorted column header showing sort direction
 
