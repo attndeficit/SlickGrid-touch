@@ -26,8 +26,13 @@ Unscheduled
 
 - icon-chevron-up/down for column popup menu
 
-- Change CSS to *not* show decoration on :hover for the existing
-  SlickGrid column header menu
+- (fixed) Change CSS to *not* show decoration on :hover for the existing
+          SlickGrid column header menu
+
+   Question [ree]: the background went away now. I left the
+   little caret (down-arrow) in the right corner. This now works
+   imo consistently both in hover and in touch mode. If you find
+   it better though then I can also make this one go away.
 
 - Selected column gets a resize handle
 
