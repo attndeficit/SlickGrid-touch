@@ -82,7 +82,7 @@
       $.each(content, function (index, value) {
           value = $.extend(true, {}, defaults, value); 
           $('<button></button>')
-            .text(value.label)
+            .html(value.label)
             .attr('class', value.cssClass)
             .attr('disabled', value.disabled)
             .attr('data-command', value.command)

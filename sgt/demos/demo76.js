@@ -114,13 +114,13 @@
         columns[i].optionsbar = [
             {
                 cssClass: 'btn btn-inverse',
-                label: "<",
+                label: '<i class="caret upsidedown"></i>',
                 command: "sort-asc",
                 disabled: ! sortable
             },
             {
                 cssClass: 'btn btn-inverse',
-                label: ">",
+                label: '<i class="caret"></i>',
                 command: "sort-desc",
                 disabled: ! sortable
             },

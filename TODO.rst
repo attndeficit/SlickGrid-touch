@@ -24,9 +24,9 @@ Unscheduled
 
 - Get an icon on the sorted column header showing sort direction
 
-- icon-chevron-up/down for column popup menu
+- (Done) icon-chevron-up/down for column popup menu
 
-- (fixed) Change CSS to *not* show decoration on :hover for the existing
+- (Done) Change CSS to *not* show decoration on :hover for the existing
           SlickGrid column header menu
 
    Question [ree]: the background went away now. I left the
