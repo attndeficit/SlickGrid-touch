@@ -166,6 +166,10 @@
                 //return false;
             }
         });
+
+        // needed to enable visual sorting directions
+        $(args.headerNode).append('<span class="slick-sort-indicator"></span>');
+
       }
     }
 

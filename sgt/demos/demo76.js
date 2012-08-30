@@ -319,12 +319,14 @@
         // hook up the sorting menu commands into the grid's sorting mechanism.
         headerOptionsPlugin.onCommand.subscribe(function (e, args) {
             if (args.command.substr(0, 5) == 'sort-') {
+                var sortAsc = args.command.substr(5) == 'asc';
                 args.grid.onSort.notify({
                     grid: args.grid,
                     multiColumnSort: false,
                     sortCol: args.column,
-                    sortAsc: args.command.substr(5) == 'asc'
+                    sortAsc: sortAsc
                 }, e, args.grid);
+                args.grid.setSortColumns([{columnId: args.column.id, sortAsc: sortAsc}]);
             }
             // TODO ... perhaps, do something visually?
         });

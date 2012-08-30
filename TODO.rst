@@ -22,7 +22,7 @@ Unscheduled
 0.1
 ===
 
-- Get an icon on the sorted column header showing sort direction
+- (Done) Get an icon on the sorted column header showing sort direction
 
 - (Done) icon-chevron-up/down for column popup menu
 
