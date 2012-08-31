@@ -326,9 +326,9 @@
                     sortCol: args.column,
                     sortAsc: sortAsc
                 }, e, args.grid);
+                // Visually mark the sorted column header with the up / down chevron.
                 args.grid.setSortColumns([{columnId: args.column.id, sortAsc: sortAsc}]);
             }
-            // TODO ... perhaps, do something visually?
         });
         grid.registerPlugin(headerOptionsPlugin); 
 
@@ -362,19 +362,23 @@
             content: [
                 {
                     cssClass: 'btn btn-inverse',
-                    label: "A",
-                    command: "commandA"
+                    label: "Edit",
+                    command: "edit"
                 },
                 {
                     cssClass: 'btn btn-inverse',
-                    label: "B",
-                    command: "commandB"
+                    label: "Delete Row",
+                    command: "delete-row",
+                    disabled: true
                 }
             ]
         });
         var cellOptionsBar = $canvas.data('optionsbar');
         $canvas.on('command.demo76', function (evt, options) {
             log('Cell command:', options.command);
+            if (options.command == 'edit') {
+                alert('Edit cell!');
+            }
         
         });
 
