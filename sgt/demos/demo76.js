@@ -137,7 +137,7 @@
     var origColumns = columns.slice();
 
     var options = {
-        editable: false,
+        editable: true,
         enableAddRow: true,
         enableCellNavigation: true,
         asyncEditorLoading: true,
@@ -379,7 +379,8 @@
             var cell = grid.getCellFromEvent(realEvt);
             log('Cell command:', options.command, cell);
             if (options.command == 'edit') {
-                alert('Edit cell!');
+                grid.setActiveCell(cell.row, cell.cell);
+                grid.editActiveCell();
             } else if (options.command == 'delete-row') {
                 var item = dataView.getItem(cell.row);
                 var RowID = item.id;
@@ -447,7 +448,20 @@
 
         });
 
-
+        grid.onClick.subscribe(function (e, args) {
+            // Prevent clicking a cell. This would go to edit which we
+            // do not want now.
+            e.stopImmediatePropagation();
+            e.preventDefault();
+        });
+        grid.onDblClick.subscribe(function (e, args) {
+            // Prevent double clicking a cell. This would go to edit which we
+            // do not want now.
+            e.stopImmediatePropagation();
+            e.preventDefault();
+        });
+ 
+ 
         // autoresize columns
         var timer;
         $(window).resize(function (evt) {
