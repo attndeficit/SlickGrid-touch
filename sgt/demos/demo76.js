@@ -368,17 +368,26 @@
                 {
                     cssClass: 'btn btn-inverse',
                     label: "Delete Row",
-                    command: "delete-row",
-                    disabled: true
+                    command: "delete-row"
                 }
             ]
         });
         var cellOptionsBar = $canvas.data('optionsbar');
         $canvas.on('command.demo76', function (evt, options) {
-            log('Cell command:', options.command);
+            // Find out the row and column of the cell
+            var realEvt = evt.originalEvent || evt;
+            var cell = grid.getCellFromEvent(realEvt);
+            log('Cell command:', options.command, cell);
             if (options.command == 'edit') {
                 alert('Edit cell!');
+            } else if (options.command == 'delete-row') {
+                var item = dataView.getItem(cell.row);
+                var RowID = item.id;
+                dataView.deleteItem(RowID);
+                grid.invalidate();
+                grid.render();
             }
+            
         
         });
 

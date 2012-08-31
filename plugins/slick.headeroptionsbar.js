@@ -115,8 +115,8 @@
       optionsBar.destroy();
       // XXX Is there a better way to get the grid's element?
       var $grid = $(_grid.getHeaderRow()).parent().parent();
-      grid.off('command.headeroptionsbar');
-      grid.off('hidemenu.headeroptionsbar');
+      $grid.off('command.headeroptionsbar');
+      $grid.off('hidemenu.headeroptionsbar');
     }
 
     function handleCommand(evt, options) {
