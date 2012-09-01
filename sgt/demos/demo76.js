@@ -133,9 +133,11 @@
         {id: "duration", name: "Duration", field: "duration",
             editor: Slick.Editors.Text, sortable: true},
         {id: "start", name: "Start", field: "start", minWidth: 60,
-            editor: Slick.Editors.Date, sortable: true},
+            editor: Slick.Editors.Text, sortable: true},
+            //editor: Slick.Editors.Date, sortable: true},
         {id: "finish", name: "Finish", field: "finish", minWidth: 60,
-            editor: Slick.Editors.Date, sortable: true}
+            editor: Slick.Editors.Text, sortable: true}
+            //editor: Slick.Editors.Date, sortable: true}
     ];
 
     var i;
