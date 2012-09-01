@@ -488,6 +488,21 @@
                 return false;
             },
 
+            tap: function (evt) {
+                var locate = locateCell(grid, evt);
+                if (locate.type == 'cell') {
+                    var selectedRows = grid.getSelectedRows();
+                    var isSelected = selectedRows.indexOf(locate.row);
+                    console.log('sel', isSelected);
+                    if (isSelected != -1) {
+                        selectedRows.splice(isSelected, 1);
+                    } else {
+                        selectedRows.push(locate.row);
+                    }
+                    grid.setSelectedRows(selectedRows);
+                }
+            },
+
             doubletap: function (evt) {
                 var locate = locateCell(grid, evt);
                 if (locate.type == 'cell') {
