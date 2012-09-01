@@ -92,6 +92,7 @@
 
       // XXX Is there a better way to get the grid's element?
       var $grid = $(_grid.getHeaderRow()).parent().parent();
+      var $header = $grid.find('.slick-header');
 
       $grid.optionsbar({
             content: function () {
@@ -102,9 +103,9 @@
       });
       optionsBar = $grid.data('optionsbar');
 
-      $grid.on('command.headeroptionsbar', $.proxy(handleCommand, this));
-      $grid.on('hidemenu.headeroptionsbar', $.proxy(handleHideMenu, this));
-      $grid.on('showmenu.headeroptionsbar', $.proxy(handleShowMenu, this));
+      $header.on('command.headeroptionsbar', $.proxy(handleCommand, this));
+      $header.on('hidemenu.headeroptionsbar', $.proxy(handleHideMenu, this));
+      $header.on('showmenu.headeroptionsbar', $.proxy(handleShowMenu, this));
 
       // Force the grid to re-render the header now that the events are hooked up.
       _grid.setColumns(_grid.getColumns());
@@ -116,9 +117,10 @@
       optionsBar.destroy();
       // XXX Is there a better way to get the grid's element?
       var $grid = $(_grid.getHeaderRow()).parent().parent();
-      $grid.off('command.headeroptionsbar');
-      $grid.off('hidemenu.headeroptionsbar');
-      $grid.off('showmenu.headeroptionsbar');
+      var $header = $grid.find('.slick-header');
+      $header.off('command.headeroptionsbar');
+      $header.off('hidemenu.headeroptionsbar');
+      $header.off('showmenu.headeroptionsbar');
     }
 
     function handleCommand(evt, options) {

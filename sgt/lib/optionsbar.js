@@ -216,6 +216,7 @@
 
         // Another of our customization. We want a showmenu event.
         var el = this.getPositionElement();
+        console.log('showmenu', el);
         el.trigger('showmenu', [{
             positionElement: el
         }]);

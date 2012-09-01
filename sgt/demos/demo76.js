@@ -365,6 +365,7 @@
             }
         });
         headerOptionsPlugin.onMenuShow.subscribe(function (e, args) {
+            console.log('onMenuShow', args);
             // save the edited cells
             if (!Slick.GlobalEditorLock.commitCurrentEdit()) {
                 // ???
