@@ -94,14 +94,14 @@
       var $grid = $(_grid.getHeaderRow()).parent().parent();
       var $header = $grid.find('.slick-header');
 
-      $grid.optionsbar({
+      $header.optionsbar({
             content: function () {
                 var $menuButton = $(this);
                 var buttons = $menuButton.data('buttons');
                 return buttons;
             }
       });
-      optionsBar = $grid.data('optionsbar');
+      optionsBar = $header.data('optionsbar');
 
       $header.on('command.headeroptionsbar', $.proxy(handleCommand, this));
       $header.on('hidemenu.headeroptionsbar', $.proxy(handleHideMenu, this));

@@ -434,7 +434,14 @@
             
         
         });
-
+        $canvas.on('showmenu.demo76', function (evt, options) {
+            // Showing the cell menu must cancel the editing too.
+            // save the edited cells
+            if (!Slick.GlobalEditorLock.commitCurrentEdit()) {
+                // ???
+                Slick.GlobalEditorLock.cancelCurrentEdit();
+            }
+        });
 
 
         var instance = {};    // hold the state of our event workflow.
