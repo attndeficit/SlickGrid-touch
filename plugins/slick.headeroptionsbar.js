@@ -104,6 +104,7 @@
 
       $grid.on('command.headeroptionsbar', $.proxy(handleCommand, this));
       $grid.on('hidemenu.headeroptionsbar', $.proxy(handleHideMenu, this));
+      $grid.on('showmenu.headeroptionsbar', $.proxy(handleShowMenu, this));
 
       // Force the grid to re-render the header now that the events are hooked up.
       _grid.setColumns(_grid.getColumns());
@@ -117,6 +118,7 @@
       var $grid = $(_grid.getHeaderRow()).parent().parent();
       $grid.off('command.headeroptionsbar');
       $grid.off('hidemenu.headeroptionsbar');
+      $grid.off('showmenu.headeroptionsbar');
     }
 
     function handleCommand(evt, options) {
@@ -136,6 +138,16 @@
             $activeHeaderColumn
                 .removeClass("slick-header-column-active");
         }
+    }
+
+    function handleShowMenu(evt, options) {
+        var target = $(evt.target);
+        var columnDef = target.find('.slick-header-menubutton').data("column");
+
+        _self.onMenuShow.notify({
+            "grid": _grid,
+            "column": columnDef
+        }, evt, _self);
     }
 
     function handleHeaderRendered(e, args) {
@@ -207,7 +219,8 @@
 
       "showMenu": showMenu,
 
-      "onCommand": new Slick.Event()
+      "onCommand": new Slick.Event(),
+      "onMenuShow": new Slick.Event()
     });
     
   }

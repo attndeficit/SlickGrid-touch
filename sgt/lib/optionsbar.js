@@ -214,6 +214,11 @@
             evt.preventMe = this;
         }
 
+        // Another of our customization. We want a showmenu event.
+        var el = this.getPositionElement();
+        el.trigger('showmenu', [{
+            positionElement: el
+        }]);
 
      }
     }

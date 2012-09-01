@@ -364,6 +364,13 @@
                 args.grid.setSortColumns([{columnId: args.column.id, sortAsc: sortAsc}]);
             }
         });
+        headerOptionsPlugin.onMenuShow.subscribe(function (e, args) {
+            // save the edited cells
+            if (!Slick.GlobalEditorLock.commitCurrentEdit()) {
+                // ???
+                Slick.GlobalEditorLock.cancelCurrentEdit();
+            }
+        });
         grid.registerPlugin(headerOptionsPlugin); 
 
 
