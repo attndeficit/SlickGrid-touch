@@ -23,10 +23,15 @@
   , init: function (type, element, options) {
         var self = this;
         $.fn.tooltip.Constructor.prototype.init.call(this, type, element, options);
-        $('body')
-            .hammer({
-                prevent_default: true
-            });
+        // XXX This is a funny issue.... One would assume that the double binding is ignored?
+        // However it seems not.... binding this many times, will multiply events.
+        var hammer = $('body').data('hammer');
+        if (! hammer) {
+            $('body')
+                .hammer({
+                    prevent_default: true
+                });
+        }
         $('body').on('tap', $.proxy(this.handleTap, this));
         this.$positionElement = null;
         this.$boundingElement = null;
@@ -216,7 +221,6 @@
 
         // Another of our customization. We want a showmenu event.
         var el = this.getPositionElement();
-        console.log('showmenu', el);
         el.trigger('showmenu', [{
             positionElement: el
         }]);
