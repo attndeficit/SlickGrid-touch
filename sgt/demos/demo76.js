@@ -491,10 +491,21 @@
             tap: function (evt) {
                 var locate = locateCell(grid, evt);
                 if (locate.type == 'cell') {
-                    // The current selection is cleared, and a single
-                    // row will be selected.
-                    var selectedRows = [locate.row];
-                    grid.setSelectedRows(selectedRows);
+                    // What is the current selection now?
+                    var selectedRows = grid.getSelectedRows();
+                    var isSameSelection = selectedRows.length == 1 && selectedRows[0] == locate.row;
+                    if (isSameSelection) {
+                        // If the same row is already selected, then a single tap acts like
+                        // a double tap: that is, this is a second tap and doubletap will be in effect.
+                        cellOptionsBar.setPositionElement(locate.target, $grid);
+                        cellOptionsBar.show(evt);
+                    } else {
+                        // If we had no selection, or a different selection from this single row in the set:
+                        // Then, the current selection is cleared, and a single
+                        // row will be selected.
+                        selectedRows = [locate.row];
+                        grid.setSelectedRows(selectedRows);
+                    }
                 }
             },
 
