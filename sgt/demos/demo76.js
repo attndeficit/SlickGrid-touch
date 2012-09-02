@@ -159,12 +159,6 @@
                 label: '<i class="caret"></i>',
                 command: "sort-desc",
                 disabled: ! sortable
-            },
-            {
-                cssClass: 'btn btn-inverse',
-                label: "Resize",
-                command: "resize",
-                disabled: true
             }
         ];
     }

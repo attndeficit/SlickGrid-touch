@@ -104,7 +104,7 @@
       optionsBar = $header.data('optionsbar');
 
       $header.on('command.headeroptionsbar', $.proxy(handleCommand, this));
-      $header.on('hidemenu.headeroptionsbar', $.proxy(handleHideMenu, this));
+      //$header.on('hidemenu.headeroptionsbar', $.proxy(handleHideMenu, this));
       $header.on('showmenu.headeroptionsbar', $.proxy(handleShowMenu, this));
 
       // Force the grid to re-render the header now that the events are hooked up.
@@ -119,7 +119,7 @@
       var $grid = $(_grid.getHeaderRow()).parent().parent();
       var $header = $grid.find('.slick-header');
       $header.off('command.headeroptionsbar');
-      $header.off('hidemenu.headeroptionsbar');
+      //$header.off('hidemenu.headeroptionsbar');
       $header.off('showmenu.headeroptionsbar');
     }
 
@@ -134,13 +134,14 @@
         }, evt, _self);
     }
 
-    function handleHideMenu(evt, options) {
-        // Remove markup if the menu is hidden.
-        if ($activeHeaderColumn) {
-            $activeHeaderColumn
-                .removeClass("slick-header-column-active");
-        }
-    }
+    //function handleHideMenu(evt, options) {
+    //    // Remove markup if the menu is hidden.
+    //  if ($activeHeaderColumn) {
+    //        $activeHeaderColumn
+    //            .removeClass("slick-header-column-active");
+    //        log('Remoevah');
+    //    }
+    //}
 
     function handleShowMenu(evt, options) {
         var target = $(evt.target);
@@ -209,8 +210,9 @@
       optionsBar.show(e);
 
       // Mark the header as active to keep the highlighting.
-      $activeHeaderColumn
-        .addClass("slick-header-column-active");
+      //$activeHeaderColumn
+      //  .addClass("slick-header-column-active");
+      //log('Addah');
 
     }
     
