@@ -14,7 +14,9 @@
 }
 
 .slick-header-column:hover > .slick-header-menubutton,
-.slick-header-column-active .slick-header-menubutton {
+.slick-header-column-active .slick-header-menubutton,
+.slick-header-column-resizing .slick-header-menubutton,
+{
   display: inline-block;
 }
 
@@ -56,3 +58,9 @@
 .slick-header-menuitem-disabled {
   color: silver;
 }
+
+.slick-header-column-resizing .slick-resizable-handle {
+    background-color: #45a2ff;
+    width: 25px;
+}
+

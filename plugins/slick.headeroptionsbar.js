@@ -135,12 +135,9 @@
     }
 
     function handleHideMenu(evt, options) {
-    //    // Remove markup if the menu is hidden.
-    //  if ($activeHeaderColumn) {
-    //        $activeHeaderColumn
-    //            .removeClass("slick-header-column-active");
-            log('Remoevah');
-    //    }
+      // Remove markup if the menu is hidden.
+      options.positionElement
+        .removeClass("slick-header-column-resizing");
     }
 
     function handleShowMenu(evt, options) {
@@ -151,6 +148,10 @@
             "grid": _grid,
             "column": columnDef
         }, evt, _self);
+      
+        $activeHeaderColumn
+            .addClass("slick-header-column-resizing");
+      console.log('Addah', $activeHeaderColumn);
     }
 
     function handleHeaderRendered(e, args) {
@@ -212,7 +213,6 @@
       // Mark the header as active to keep the highlighting.
       //$activeHeaderColumn
       //  .addClass("slick-header-column-active");
-      log('Addah');
 
     }
     

@@ -122,6 +122,13 @@
     }
 
   , setPositionElement: function (el, /*optional*/ bounding) {
+      // Initially this hides the element.
+      // This assures that hide() is first called with the old positioning target.
+      var $tip = this.tip();
+      if ($tip.is(':visible')) {
+        this.hide();
+      }
+      // Now, set the position element.
       this.$positionElement = $(el);
       // optionally, a bounding element can be specified.
       this.$boundingElement = $(bounding);
@@ -149,12 +156,8 @@
         , placement
         , tp
 
-      $tip = this.tip();
-      if ($tip.is(':visible')) {
-        this.hide();
-      }
-
       if (this.hasContent() && this.enabled) {
+        $tip = this.tip();
         this.setContent()
 
         if (this.options.animation) {
