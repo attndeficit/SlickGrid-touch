@@ -505,6 +505,13 @@
                         // row will be selected.
                         selectedRows = [locate.row];
                         grid.setSelectedRows(selectedRows);
+                        //
+                        // This must cancel the editing too.
+                        // save the edited cells
+                        if (!Slick.GlobalEditorLock.commitCurrentEdit()) {
+                            // ???
+                            Slick.GlobalEditorLock.cancelCurrentEdit();
+                        }
                     }
                 }
             },
