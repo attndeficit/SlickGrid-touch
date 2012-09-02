@@ -149,8 +149,12 @@
         , placement
         , tp
 
+      $tip = this.tip();
+      if ($tip.is(':visible')) {
+        this.hide();
+      }
+
       if (this.hasContent() && this.enabled) {
-        $tip = this.tip()
         this.setContent()
 
         if (this.options.animation) {
