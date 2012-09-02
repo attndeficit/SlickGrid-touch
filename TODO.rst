@@ -29,21 +29,16 @@ Unscheduled
 - (Done) Change CSS to *not* show decoration on :hover for the existing
           SlickGrid column header menu
 
-   Question [ree]: the background went away now. I left the
-   little caret (down-arrow) in the right corner. This now works
-   imo consistently both in hover and in touch mode. If you find
-   it better though then I can also make this one go away.
-
 - Selected column gets a resize handle
 
-- Tapping a row marks that row as selected, highlights the row, and
+- (Done) Tapping a row marks that row as selected, highlights the row, and
   pops up the row menu
 
-- Row menu for "Edit" and "Delete Row"
+- (Done) Row menu for "Edit" and "Delete Row"
 
-- "Edit" menu item turns on editing on tapped cell
+- (Done) "Edit" menu item turns on editing on tapped cell
 
-- "Delete Row" deletes row
+- (Done) "Delete Row" deletes row
 
 - (Done) Pinch-to-resize in a column
  
