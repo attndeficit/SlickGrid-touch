@@ -60,7 +60,13 @@
 }
 
 .slick-header-column-resizing .slick-resizable-handle {
+    display: none;
+}
+
+.slick-header-column-resizing .slick-header-menubutton {
     background-color: #45a2ff;
     width: 25px;
+    display: inline-block;
+    position: absolute;
 }
 

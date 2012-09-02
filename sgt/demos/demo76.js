@@ -345,6 +345,7 @@
 
         // header menus
         var headerOptionsPlugin = new Slick.Plugins.HeaderOptionsBar({
+            buttonImage: null
         });
         // hook up the sorting menu commands into the grid's sorting mechanism.
         headerOptionsPlugin.onCommand.subscribe(function (e, args) {
@@ -383,11 +384,11 @@
                     'dragstart drag dragend swipe release', function (evt) {
             var locate = locateCell(grid, evt);
             if (locate.type == 'header') {
-                log('Touch event (header):', evt.type, locate.column);
+                //log('Touch event (header):', evt.type, locate.column);
             } else if (locate.type == 'cell') {
-                log('Touch event (cell):', evt.type, locate.row, locate.column);
+                //log('Touch event (cell):', evt.type, locate.row, locate.column);
             } else {
-                log('Touch event (outside):', evt.type);
+                //log('Touch event (outside):', evt.type);
             }
         });
 

@@ -142,7 +142,8 @@
 
     function handleShowMenu(evt, options) {
         var target = $(evt.target);
-        var columnDef = target.find('.slick-header-menubutton').data("column");
+        var button = target.find('.slick-header-menubutton');
+        var columnDef = button.data("column");
 
         _self.onMenuShow.notify({
             "grid": _grid,
@@ -151,7 +152,9 @@
       
         $activeHeaderColumn
             .addClass("slick-header-column-resizing");
-      console.log('Addah', $activeHeaderColumn);
+        // We also save the position of the menu button which will
+        // be used as a drag resize handle.
+        button.data('orig-left', button.offset().left);
     }
 
     function handleHeaderRendered(e, args) {
@@ -171,20 +174,50 @@
         $el
           .appendTo(args.headerNode);
 
-        $(args.headerNode)
+        var headerNode = $(args.headerNode);
+        headerNode
             .hammer({
                 prevent_default: true
             });
-        $(args.headerNode).on({
+        headerNode.on({
+
             tap: function (evt) {
                 showMenu.call($el[0], evt);
-                // important to prevent this, or else it would hide itself immediately.
+            },
+
+            // Drag the handle in the header to resize a column.
+
+            //dragstart: function (evt) {
+                // XXX Why is there no dragstart? Hammer.js problem, or?
+                // XXX Beh, anyway...
+            //},
+
+            drag: function (evt) {
+                var offset = evt.pageX || evt.originalEvent.pageX;
+                $el.offset({left: offset});
+            },
+
+            dragend: function (evt) {
+                var offset = evt.pageX || evt.originalEvent.pageX;
+                var oldLeft = $el.data('orig-left');
+                var diff = offset - oldLeft;
+
+                var columnIndex = headerNode.index();
+                var newWidth = headerNode.width() + diff + $el.width();
+                log('dragend', columnIndex, diff, newWidth);
+
+                headerNode.width(newWidth);
+                var columns = _grid.getColumns(columns);
+                columns[columnIndex].width = newWidth;
+                _grid.setColumns(columns);
+                _grid.autosizeColumns();
                 //return false;
             }
+
         });
 
         // needed to enable visual sorting directions
-        $(args.headerNode).append('<span class="slick-sort-indicator"></span>');
+        headerNode.append('<span class="slick-sort-indicator"></span>');
 
       }
     }
@@ -200,8 +233,6 @@
 
 
     function showMenu(e) {
-      //optionsBar.hide();
-
       var $menuButton = $(this);
       $activeHeaderColumn = $menuButton.closest(".slick-header-column");
       // XXX Is there a better way to get the grid's element?
@@ -209,10 +240,6 @@
 
       optionsBar.setPositionElement($activeHeaderColumn, $grid);
       optionsBar.show(e);
-
-      // Mark the header as active to keep the highlighting.
-      //$activeHeaderColumn
-      //  .addClass("slick-header-column-active");
 
     }
     
