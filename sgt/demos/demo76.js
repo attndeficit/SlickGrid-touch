@@ -2,7 +2,7 @@
 /*jslint undef: true, newcap: true, nomen: false, white: true, regexp: true */
 /*jslint plusplus: false, bitwise: true, maxerr: 50, maxlen: 110, indent: 4 */
 /*jslint sub: true */
-/*globals window navigator document console */
+/*globals window navigator document */
 /*globals setTimeout clearTimeout setInterval */ 
 /*globals Slick alert */ 
 
@@ -491,14 +491,9 @@
             tap: function (evt) {
                 var locate = locateCell(grid, evt);
                 if (locate.type == 'cell') {
-                    var selectedRows = grid.getSelectedRows();
-                    var isSelected = selectedRows.indexOf(locate.row);
-                    console.log('sel', isSelected);
-                    if (isSelected != -1) {
-                        selectedRows.splice(isSelected, 1);
-                    } else {
-                        selectedRows.push(locate.row);
-                    }
+                    // The current selection is cleared, and a single
+                    // row will be selected.
+                    var selectedRows = [locate.row];
                     grid.setSelectedRows(selectedRows);
                 }
             },
