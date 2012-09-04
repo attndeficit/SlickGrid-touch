@@ -152,9 +152,6 @@
       
         $activeHeaderColumn
             .addClass("slick-header-column-resizing");
-        // We also save the position of the menu button which will
-        // be used as a drag resize handle.
-        button.data('orig-left', button.offset().left);
     }
 
     function handleHeaderRendered(e, args) {
@@ -174,6 +171,7 @@
         $el
           .appendTo(args.headerNode);
 
+        var instance = {};  // to store the state for the dnd
         var headerNode = $(args.headerNode);
         headerNode
             .hammer({
@@ -194,24 +192,46 @@
 
             drag: function (evt) {
                 var offset = evt.pageX || evt.originalEvent.pageX;
-                $el.offset({left: offset});
+
+                // need to do this because the dragstart event is borken.
+                if (! instance.isDragging) {
+                    // poor man's dragstart
+                    instance.offset = offset;
+                    instance.width = $activeHeaderColumn.width();
+                    instance.isDragging = true;
+                }
+
+                var oldLeft = instance.offset;
+                var diff = offset - oldLeft;
+                var oldWidth = instance.width;
+                var newWidth = oldWidth + diff;
+
+                headerNode.width(newWidth);
             },
 
             dragend: function (evt) {
-                var offset = evt.pageX || evt.originalEvent.pageX;
-                var oldLeft = $el.data('orig-left');
-                var diff = offset - oldLeft;
+                instance.isDragging = false;
 
-                var columnIndex = headerNode.index();
-                var newWidth = headerNode.width() + diff + $el.width();
-                log('dragend', columnIndex, diff, newWidth);
+                var offset = evt.pageX || evt.originalEvent.pageX;
+
+                var oldLeft = instance.offset;
+                var diff = offset - oldLeft;
+                var oldWidth = instance.width;
+                var newWidth = oldWidth + diff;
 
                 headerNode.width(newWidth);
+
                 var columns = _grid.getColumns(columns);
+                var columnIndex = headerNode.index();
                 columns[columnIndex].width = newWidth;
                 _grid.setColumns(columns);
                 _grid.autosizeColumns();
-                //return false;
+
+                // close the menu too
+                // XXX Is there a better way to get the grid's element?
+                var $grid = $(_grid.getHeaderRow()).parent().parent();
+                var $header = $grid.find('.slick-header');
+                $header.optionsbar('hide');
             }
 
         });
