@@ -243,9 +243,8 @@
                 var columnIndex = headerNode.index();
                 columns[columnIndex].width = newWidth;
                 headerNode.width(newWidth);
-                log(columnIndex, offset, newWidth);
                 _grid.setColumns(columns);
-                ////_grid.autosizeColumns();
+                _grid.autosizeColumns();
 
                 // close the menu too
                 // XXX Is there a better way to get the grid's element?
