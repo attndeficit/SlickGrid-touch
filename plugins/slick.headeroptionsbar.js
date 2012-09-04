@@ -198,6 +198,13 @@
                     // poor man's dragstart
                     instance.offset = offset;
                     instance.width = $activeHeaderColumn.width();
+                    var columnDef = $activeHeaderColumn.data('column');
+                    // Calculate a limiting Min Width, use the column's
+                    // desired minWidth (if specified), and also limit
+                    // with the minimum of the button handle's width.
+                    var minWidth = columnDef.minWidth || 0;
+                    instance.minWidth = Math.max($el.width(), minWidth); 
+                    instance.maxWidth = columnDef.maxWidth;
                     instance.isDragging = true;
                 }
 
@@ -205,6 +212,10 @@
                 var diff = offset - oldLeft;
                 var oldWidth = instance.width;
                 var newWidth = oldWidth + diff;
+                newWidth = Math.max(newWidth, instance.minWidth);
+                if (instance.maxWidth !== undefined) {
+                    newWidth = Math.min(newWidth, instance.maxWidth);
+                }
 
                 headerNode.width(newWidth);
             },
@@ -218,14 +229,18 @@
                 var diff = offset - oldLeft;
                 var oldWidth = instance.width;
                 var newWidth = oldWidth + diff;
+                newWidth = Math.max(newWidth, instance.minWidth);
+                if (instance.maxWidth !== undefined) {
+                    newWidth = Math.min(newWidth, instance.maxWidth);
+                }
 
-                headerNode.width(newWidth);
 
                 var columns = _grid.getColumns(columns);
                 var columnIndex = headerNode.index();
                 columns[columnIndex].width = newWidth;
+                headerNode.width(newWidth, columnIndex);
                 _grid.setColumns(columns);
-                _grid.autosizeColumns();
+                ////_grid.autosizeColumns();
 
                 // close the menu too
                 // XXX Is there a better way to get the grid's element?
