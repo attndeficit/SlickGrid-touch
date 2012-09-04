@@ -192,6 +192,7 @@
 
             drag: function (evt) {
                 var offset = evt.pageX || evt.originalEvent.pageX;
+                instance.currentOffset = offset;
 
                 // need to do this because the dragstart event is borken.
                 if (! instance.isDragging) {
@@ -223,7 +224,10 @@
             dragend: function (evt) {
                 instance.isDragging = false;
 
-                var offset = evt.pageX || evt.originalEvent.pageX;
+                // XXX for some reason the offset is missing here...
+                // so, we will use the last good one from the drag event.
+                //var offset = evt.pageX || evt.originalEvent.pageX;
+                var offset = instance.currentOffset;
 
                 var oldLeft = instance.offset;
                 var diff = offset - oldLeft;
@@ -238,7 +242,8 @@
                 var columns = _grid.getColumns(columns);
                 var columnIndex = headerNode.index();
                 columns[columnIndex].width = newWidth;
-                headerNode.width(newWidth, columnIndex);
+                headerNode.width(newWidth);
+                log(columnIndex, offset, newWidth);
                 _grid.setColumns(columns);
                 ////_grid.autosizeColumns();
 
