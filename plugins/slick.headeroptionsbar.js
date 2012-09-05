@@ -181,7 +181,10 @@
 
             tap: function (evt) {
                 showMenu.call($el[0], evt);
-            },
+            }
+
+        });
+        $el.on({
 
             // Drag the handle in the header to resize a column.
 
