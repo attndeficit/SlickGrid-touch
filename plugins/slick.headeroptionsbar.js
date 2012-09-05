@@ -200,8 +200,8 @@
                     // poor man's dragstart
 
                     // Accept only the target, do not allow to click outside.
-                    var realTarget =  $(evt.originalEvent.target || evt.target);
-                    if (! $(realTarget).is('.slick-header-menubutton')) {
+                    var target =  $(evt.originalEvent ? evt.originalEvent.target : evt.target);
+                    if (! $(target).is('.slick-header-menubutton')) {
                         return;
                     }
 
