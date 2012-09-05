@@ -82,6 +82,7 @@
     var $menu;
     var $activeHeaderColumn;
     var optionsBar;
+    var dragState;
 
     function init(grid) {
       options = $.extend(true, {}, _defaults, options);
@@ -109,6 +110,8 @@
 
       // Force the grid to re-render the header now that the events are hooked up.
       _grid.setColumns(_grid.getColumns());
+
+      dragState = {};
 
     }
 
@@ -171,100 +174,21 @@
         $el
           .appendTo(args.headerNode);
 
-        var instance = {};  // to store the state for the dnd
         var headerNode = $(args.headerNode);
         headerNode
             .hammer({
                 prevent_default: true
             });
         headerNode.on({
-
             tap: function (evt) {
-                showMenu.call($el[0], evt);
+                return handleHeaderTap.call(this, evt);
             },
-
-            // Drag the handle in the header to resize a column.
-
-            //dragstart: function (evt) {
-                // XXX Why is there no dragstart? Hammer.js problem, or?
-                // XXX Beh, anyway...
-            //},
-
             drag: function (evt) {
-
-                var offset = evt.pageX || evt.originalEvent.pageX;
-                instance.currentOffset = offset;
-
-                // need to do this because the dragstart event is borken.
-                if (! instance.isDragging) {
-                    // poor man's dragstart
-
-                    // Accept only the target, do not allow to click outside.
-                    var target =  $(evt.originalEvent ? evt.originalEvent.target : evt.target);
-                    if (! $(target).is('.slick-header-menubutton')) {
-                        return;
-                    }
-
-                    instance.offset = offset;
-                    instance.width = $activeHeaderColumn.width();
-                    var columnDef = $activeHeaderColumn.data('column');
-                    // Calculate a limiting Min Width, use the column's
-                    // desired minWidth (if specified), and also limit
-                    // with the minimum of the button handle's width.
-                    var minWidth = columnDef.minWidth || 0;
-                    instance.minWidth = Math.max($el.width(), minWidth); 
-                    instance.maxWidth = columnDef.maxWidth;
-                    instance.isDragging = true;
-                }
-
-                var oldLeft = instance.offset;
-                var diff = offset - oldLeft;
-                var oldWidth = instance.width;
-                var newWidth = oldWidth + diff;
-                newWidth = Math.max(newWidth, instance.minWidth);
-                if (instance.maxWidth !== undefined) {
-                    newWidth = Math.min(newWidth, instance.maxWidth);
-                }
-
-                headerNode.width(newWidth);
+                return handleHeaderDrag.call(this, evt, headerNode);
             },
-
             dragend: function (evt) {
-
-                if (! instance.isDragging) {
-                    return;
-                }
-                instance.isDragging = false;
-
-                // XXX for some reason the offset is missing here...
-                // so, we will use the last good one from the drag event.
-                //var offset = evt.pageX || evt.originalEvent.pageX;
-                var offset = instance.currentOffset;
-
-                var oldLeft = instance.offset;
-                var diff = offset - oldLeft;
-                var oldWidth = instance.width;
-                var newWidth = oldWidth + diff;
-                newWidth = Math.max(newWidth, instance.minWidth);
-                if (instance.maxWidth !== undefined) {
-                    newWidth = Math.min(newWidth, instance.maxWidth);
-                }
-
-
-                var columns = _grid.getColumns(columns);
-                var columnIndex = headerNode.index();
-                columns[columnIndex].width = newWidth;
-                headerNode.width(newWidth);
-                _grid.setColumns(columns);
-                _grid.autosizeColumns();
-
-                // close the menu too
-                // XXX Is there a better way to get the grid's element?
-                var $grid = $(_grid.getHeaderRow()).parent().parent();
-                var $header = $grid.find('.slick-header');
-                $header.optionsbar('hide');
+                return handleHeaderDragend.call(this, evt, headerNode);
             }
-
         });
 
         // needed to enable visual sorting directions
@@ -295,6 +219,89 @@
     }
     
     
+    function handleHeaderTap(evt) {
+        var target =  $(evt.originalEvent ? evt.originalEvent.target : evt.target);
+        var button = target.find('.slick-header-menubutton');
+        showMenu.call(button[0], evt);
+    }
+
+    // Drag the handle in the header to resize a column.
+
+    function handleHeaderDrag(evt, headerNode) {
+        var offset = evt.pageX || evt.originalEvent.pageX;
+        dragState.currentOffset = offset;
+
+        // need to do this because the dragstart event is borken.
+        if (! dragState.isDragging) {
+            // poor man's dragstart
+
+            // Accept only the target, do not allow to click outside.
+            var target =  $(evt.originalEvent ? evt.originalEvent.target : evt.target);
+            if (! $(target).is('.slick-header-menubutton')) {
+                return;
+            }
+
+            dragState.offset = offset;
+            dragState.width = $activeHeaderColumn.width();
+            var columnDef = $activeHeaderColumn.data('column');
+            // Calculate a limiting Min Width, use the column's
+            // desired minWidth (if specified), and also limit
+            // with the minimum of the button handle's width.
+            var minWidth = columnDef.minWidth || 0;
+            var button = target.find('.slick-header-menubutton');
+            dragState.minWidth = Math.max(button.width(), minWidth); 
+            dragState.maxWidth = columnDef.maxWidth;
+            dragState.isDragging = true;
+        }
+
+        var oldLeft = dragState.offset;
+        var diff = offset - oldLeft;
+        var oldWidth = dragState.width;
+        var newWidth = oldWidth + diff;
+        newWidth = Math.max(newWidth, dragState.minWidth);
+        if (dragState.maxWidth !== undefined) {
+            newWidth = Math.min(newWidth, dragState.maxWidth);
+        }
+
+        headerNode.width(newWidth);
+    }
+
+    function handleHeaderDragend(evt, headerNode) {
+        if (! dragState.isDragging) {
+            return;
+        }
+        dragState.isDragging = false;
+
+        // XXX for some reason the offset is missing here...
+        // so, we will use the last good one from the drag event.
+        //var offset = evt.pageX || evt.originalEvent.pageX;
+        var offset = dragState.currentOffset;
+
+        var oldLeft = dragState.offset;
+        var diff = offset - oldLeft;
+        var oldWidth = dragState.width;
+        var newWidth = oldWidth + diff;
+        newWidth = Math.max(newWidth, dragState.minWidth);
+        if (dragState.maxWidth !== undefined) {
+            newWidth = Math.min(newWidth, dragState.maxWidth);
+        }
+
+
+        var columns = _grid.getColumns(columns);
+        var columnIndex = headerNode.index();
+        columns[columnIndex].width = newWidth;
+        headerNode.width(newWidth);
+        _grid.setColumns(columns);
+        _grid.autosizeColumns();
+
+        // close the menu too
+        // XXX Is there a better way to get the grid's element?
+        var $grid = $(_grid.getHeaderRow()).parent().parent();
+        var $header = $grid.find('.slick-header');
+        $header.optionsbar('hide');
+    }
+
+
     $.extend(this, {
       "init": init,
       "destroy": destroy,
