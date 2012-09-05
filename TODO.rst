@@ -27,12 +27,12 @@ Unscheduled
 - (Done) icon-chevron-up/down for column popup menu
 
 - (Done) Change CSS to *not* show decoration on :hover for the existing
-          SlickGrid column header menu
+         SlickGrid column header menu
 
-- Selected column gets a resize handle
+- (Done) Selected column gets a resize handle
 
 - (Done) Tapping a row marks that row as selected, highlights the row, and
-  pops up the row menu
+         pops up the row menu
 
 - (Done) Row menu for "Edit" and "Delete Row"
 
