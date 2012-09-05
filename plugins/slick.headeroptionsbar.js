@@ -181,10 +181,7 @@
 
             tap: function (evt) {
                 showMenu.call($el[0], evt);
-            }
-
-        });
-        $el.on({
+            },
 
             // Drag the handle in the header to resize a column.
 
@@ -194,12 +191,20 @@
             //},
 
             drag: function (evt) {
+
                 var offset = evt.pageX || evt.originalEvent.pageX;
                 instance.currentOffset = offset;
 
                 // need to do this because the dragstart event is borken.
                 if (! instance.isDragging) {
                     // poor man's dragstart
+
+                    // Accept only the target, do not allow to click outside.
+                    var realTarget =  $(evt.originalEvent.target || evt.target);
+                    if (! $(realTarget).is('.slick-header-menubutton')) {
+                        return;
+                    }
+
                     instance.offset = offset;
                     instance.width = $activeHeaderColumn.width();
                     var columnDef = $activeHeaderColumn.data('column');
@@ -225,6 +230,10 @@
             },
 
             dragend: function (evt) {
+
+                if (! instance.isDragging) {
+                    return;
+                }
                 instance.isDragging = false;
 
                 // XXX for some reason the offset is missing here...
