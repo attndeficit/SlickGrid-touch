@@ -59,6 +59,11 @@
   color: silver;
 }
 
+.slick-header-column.ui-state-default.slick-header-column-resizing {
+    border: 4px solid #45a2ff;
+    padding: 0;
+}
+
 .slick-header-column-resizing .slick-resizable-handle {
     display: none;
 }
