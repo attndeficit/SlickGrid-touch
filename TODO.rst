@@ -6,9 +6,14 @@ Unscheduled
 
 - Style the example table with Bootstrap table styles
 
+- *Cancel an edit*. Have a button that either does the save,
+  or cancels the edit, when an edit is done inline.
 
 0.2, KARL Files Branch
 ======================
+
+- *Show/Hide Columns*. Column menu gets a menu item "Columns" which
+  pops up a checkbox.
 
 - Filtering
 
