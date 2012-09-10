@@ -41,25 +41,26 @@
         var self = this;
         var realEvt = evt.originalEvent || evt;
         var target = $(realEvt.target);
-        var tappedInside = this.tip().has(target).length > 0;
+        var tip = this.tip();
+        var tappedInside = tip.has(target).length > 0;
         if (! tappedInside) {
-            // XXX a dirty trick?
-            if (evt.preventMe !== self) {
-                self.hide();
-            }
+            // Tapping outside will close this option bar.
+            this.hide();
         } else {
+            // Tap happened inside.
             // Let's find the command that needs to execute.
             if (target.is('button')) {
                 var command = target.data('command');
                 // We also hide the options bar.
-                self.hide();
+                this.hide();
                 // And trigger the execution of the command.
-                var el = self.getPositionElement();
+                // It triggers on the position element.
+                var el = this.getPositionElement();
                 el.trigger('command', [{
                     command: command
                 }]);
             }
-        }
+        } 
     }
 
   , hide: function () {
@@ -146,8 +147,15 @@
       })
     }
 
- , show: function (/*optional*/ evt) {
-     // Override from tooltips, for a better positioning
+ , show: function () {
+    // Show is delayed a little bit. This makes sure
+    // that all instances can _hide_ on the same event, and,
+    // that the to-be-shown menu does not get hidden.
+    setTimeout($.proxy(this.showDelayed, this), 10);
+ }
+
+ , showDelayed: function () {
+     // Override from tooltip's show(), for a better positioning
       var $tip
         , inside
         , pos
@@ -219,12 +227,6 @@
           .css(tp)
           .addClass(placement)
           .addClass('in');
-
-
-        if (evt !== undefined) {
-            // XXX a dirty trick?
-            evt.preventMe = this;
-        }
 
         // Another of our customization. We want a showmenu event.
         var el = this.getPositionElement();

@@ -207,14 +207,14 @@
     }
 
 
-    function showMenu(e) {
+    function showMenu() {
       var $menuButton = $(this);
       $activeHeaderColumn = $menuButton.closest(".slick-header-column");
       // XXX Is there a better way to get the grid's element?
       var $grid = $(_grid.getHeaderRow()).parent().parent();
 
       optionsBar.setPositionElement($activeHeaderColumn, $grid);
-      optionsBar.show(e);
+      optionsBar.show();
 
     }
     
@@ -222,7 +222,7 @@
     function handleHeaderTap(evt) {
         var target =  $(evt.originalEvent ? evt.originalEvent.target : evt.target);
         var button = target.find('.slick-header-menubutton');
-        showMenu.call(button[0], evt);
+        showMenu.call(button[0]);
     }
 
     // Drag the handle in the header to resize a column.

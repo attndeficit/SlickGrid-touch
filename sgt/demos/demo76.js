@@ -395,6 +395,7 @@
         // Cell button bar
 
         var $canvas = $grid.find('.grid-canvas');
+        var $viewport = $grid.find('.slick-viewport');
 
         $canvas.optionsbar({
             content: [
@@ -411,14 +412,20 @@
             ]
         });
         var cellOptionsBar = $canvas.data('optionsbar');
+        var finishEditBar;
         $canvas.on('command.demo76', function (evt, options) {
             // Find out the row and column of the cell
             var realEvt = evt.originalEvent || evt;
             var cell = grid.getCellFromEvent(realEvt);
             log('Cell command:', options.command, cell);
             if (options.command == 'edit') {
+                // Set this cell to be the active one. And activate the editor for it.
                 grid.setActiveCell(cell.row, cell.cell);
                 grid.editActiveCell();
+                // Pop up a second toolbar that can be used to cancel the editing.
+                finishEditBar.setPositionElement(realEvt.target, $grid);
+                finishEditBar.show(evt);
+
             } else if (options.command == 'delete-row') {
                 var item = dataView.getItem(cell.row);
                 var RowID = item.id;
@@ -429,18 +436,14 @@
             
         
         });
-        $canvas.on('showmenu.demo76', function (evt, options) {
-            // Showing the cell menu must cancel the editing too.
-            // save the edited cells
-            if (!Slick.GlobalEditorLock.commitCurrentEdit()) {
-                // ???
-                Slick.GlobalEditorLock.cancelCurrentEdit();
-            }
-        });
 
 
         var instance = {};    // hold the state of our event workflow.
         $grid.on({
+
+            // This part is handling the pinch-to-resize on the canvas
+            // (pinching in top of the cell, resizes the column.
+            // An ambivalent experiment.)
 
             transformstart: function (evt) {
                 // Find out the row and column of the cell
@@ -483,6 +486,11 @@
                 return false;
             },
 
+
+            // Tapping selects the tapped row, and unselects any other row.
+            // Tapping a selected row pops the cell options menu buttons,
+            // doubletapping has the same effect as selecting and tapping again.
+
             tap: function (evt) {
                 var locate = locateCell(grid, evt);
                 if (locate.type == 'cell') {
@@ -519,6 +527,27 @@
                 }
             }
 
+        });
+
+
+        // The edit buttons are bound to a separate node then the first (hmmm...)
+        $viewport.optionsbar({
+            content: [
+                {
+                    cssClass: 'btn btn-inverse',
+                    label: "Cancel",
+                    command: "cancel-editing"
+                }
+            ]
+        });
+        finishEditBar = $viewport.data('optionsbar');
+        $viewport.on('command.demo76', function (evt, options) {
+            // Find out the row and column of the cell
+            var realEvt = evt.originalEvent || evt;
+            var cell = grid.getCellFromEvent(realEvt);
+            if (options.command == 'cancel-editing') {
+                Slick.GlobalEditorLock.cancelCurrentEdit();
+            }
         });
 
         grid.onClick.subscribe(function (e, args) {
