@@ -45,5 +45,9 @@ Unscheduled
 
 - (Done) "Delete Row" deletes row
 
-- (Done) Pinch-to-resize in a column
+- (Removed) Pinch-to-resize in a column
+
+
+- (BUG) The editing on the tablet does not actually focus the
+        input.
  

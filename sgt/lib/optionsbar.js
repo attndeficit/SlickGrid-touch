@@ -4,6 +4,11 @@
 
   "use strict"; // jshint ;_;
 
+  function defer(inner, instance) {
+    setTimeout(function () {
+        inner();
+    }, 10);
+  }
 
  /* OptionsBar PUBLIC CLASS DEFINITION
   * =============================== */
@@ -186,11 +191,11 @@
       var self = this;
       // Showing with a timeout avoids hiding
       // the widget from the same event when it's showing.
-      setTimeout(function () {
+      defer(function() {
           self._show();
           // Remember that we are shown
           self.global.shown = self;
-      }, 10);
+      });
     }
 
  , _show: function () {

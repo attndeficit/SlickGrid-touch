@@ -76,6 +76,12 @@
     // Make it available for code outside the closure:  sgtdemo.log(....);
     window.sgtdemo = {log: log};
 
+    function defer(inner, instance) {
+        setTimeout(function () {
+            inner();
+        }, 10);
+    }
+
     function requiredFieldValidator(value) {
         if (value === null || value === undefined || !value.length) {
             return {valid: false, msg: "This is a required field"};
@@ -106,11 +112,14 @@
             var cell = grid.getCellFromEvent(realEvt);
             if (cell !== null) {
                 // We are in the canvas.
+                var $cell = target.closest('.slick-cell');
+                var state = $cell.hasClass('editable') ? 'editing': 'normal';
                 res = {
                     target: target,
                     type: 'cell',
                     row: cell.row,
-                    column: cell.cell
+                    column: cell.cell,
+                    state: state
                 };
             } else {
                 // We are not in the canvas.
@@ -411,7 +420,9 @@
             if (options.command == 'edit') {
                 // Set this cell to be the active one. And activate the editor for it.
                 grid.setActiveCell(cell.row, cell.cell);
-                grid.editActiveCell();
+                defer(function () {
+                    grid.editActiveCell();
+                });
                 // Pop up a second toolbar that can be used to cancel the editing.
                 finishEditBar.setPositionElement(realEvt.target, $grid);
                 finishEditBar.show();
@@ -448,7 +459,7 @@
             // doubletapping has the same effect as selecting and tapping again.
             tap: function (evt) {
                 var locate = locateCell(grid, evt);
-                if (locate.type == 'cell') {
+                if (locate.type == 'cell' && locate.state != 'editing') {
                     // What is the current selection now?
                     var selectedRows = grid.getSelectedRows();
                     var isSameSelection = selectedRows.length == 1 && selectedRows[0] == locate.row;
@@ -476,7 +487,7 @@
 
             doubletap: function (evt) {
                 var locate = locateCell(grid, evt);
-                if (locate.type == 'cell') {
+                if (locate.type == 'cell' && locate.state != 'editing') {
                     cellOptionsBar.setPositionElement(locate.target, $grid);
                     cellOptionsBar.show();
                 }
