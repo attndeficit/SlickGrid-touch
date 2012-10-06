@@ -175,10 +175,17 @@
           .appendTo(args.headerNode);
 
         var headerNode = $(args.headerNode);
-        headerNode
-            .hammer({
-                prevent_default: true
-            });
+        if (headerNode.data('hammer') === undefined) {
+            headerNode.hammer({
+                swipe: false,
+                drag: true,
+                transform: false,
+                tap: true,
+                tap_double: false,
+                hold: false
+                });
+        }
+
         headerNode.on({
             tap: function (evt) {
                 return handleHeaderTap.call(this, evt);

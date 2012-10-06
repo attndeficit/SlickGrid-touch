@@ -9,9 +9,7 @@
 
 (function ($) {
 
-
     // Proxy a minimal but necessary part of jquery-ui
-    // XX TODO, move this to somewhere on its own at some point?
     $.ui = $.ui || {};
     if (! $.ui.version) {
         $.extend($.ui, {
@@ -42,7 +40,7 @@
         });
     }
 
-
+    // This is used for the logging.
     function _safeConvert(obj) {
         var type = $.type(obj);
         if (type == 'object' && $(obj).parent().length > 0) {
@@ -62,6 +60,9 @@
         return obj;
     }
 
+    // Custom logging. On mobile devices, debug console is
+    // lacking. We provide a way to print log messages
+    // into the html page itself.
     function log() {
         var args = [new Date()];
         var i;
@@ -72,8 +73,8 @@
         var repr = JSON.stringify(args);
         $('#logger').prepend('<code>' + repr + '</code><br>');
     }
-
-    window.log = log;
+    // Make it available for code outside the closure:  sgtdemo.log(....);
+    window.sgtdemo = {log: log};
 
     function requiredFieldValidator(value) {
         if (value === null || value === undefined || !value.length) {
@@ -84,7 +85,8 @@
         }
     }
 
-
+    // Locate which cell was touched, from the touch event.
+    // Find a given cell or a given row header.
     function locateCell(grid, evt) {
         // There is something strange going on with the event targets here. We would like
         // to get the target (typically a <div class="slick-cell" />), but that does not seem
@@ -201,15 +203,6 @@
         }
     }
 
-
-    //$(".grid-header .ui-icon")
-    //    .addClass("ui-state-default ui-corner-all")
-    //    .mouseover(function (e) {
-    //        $(e.target).addClass("ui-state-hover");
-    //    })
-    //    .mouseout(function (e) {
-    //        $(e.target).removeClass("ui-state-hover");
-    //    });
 
     $(function () {
 
@@ -372,13 +365,9 @@
 
 
         var $grid = $('#myGrid');
-        // Enable event translation for both the canvas (cells), and the headers.
-        // It seems the only way to run this is prevent_default = true.
-        // But this means that we need to wire all touch events we want.
-        $grid.hammer({
-            prevent_default: true
-        });
-        
+
+
+/*
         // Help debugging by logging all the possible events with the cell information.
         $grid.on('hold tap doubletap transformstart transform transformend' +
                     'dragstart drag dragend swipe release', function (evt) {
@@ -391,6 +380,7 @@
                 //log('Touch event (outside):', evt.type);
             }
         });
+*/
 
         // Cell button bar
 
@@ -424,7 +414,7 @@
                 grid.editActiveCell();
                 // Pop up a second toolbar that can be used to cancel the editing.
                 finishEditBar.setPositionElement(realEvt.target, $grid);
-                finishEditBar.show(evt);
+                finishEditBar.show();
 
             } else if (options.command == 'delete-row') {
                 var item = dataView.getItem(cell.row);
@@ -438,59 +428,24 @@
         });
 
 
+        // Make sure we have a hammer. One is enough. XXX XXX
+        if ($grid.data('hammer') === undefined) {
+            $grid.hammer({
+                swipe: false,
+                drag: false,
+                transform: false,
+                tap: true,
+                tap_double: true,
+                hold: false
+            });
+        }
+
         var instance = {};    // hold the state of our event workflow.
         $grid.on({
-
-            // This part is handling the pinch-to-resize on the canvas
-            // (pinching in top of the cell, resizes the column.
-            // An ambivalent experiment.)
-
-            transformstart: function (evt) {
-                // Find out the row and column of the cell
-                var target = evt.originalEvent.target;
-                var cell = grid.getCellFromEvent(evt.originalEvent);
-                // Let's lock the column for the duration of the entire transform.
-                instance.columnIndex = cell.cell;
-                var cHeaders = $('#myGrid .slick-header .slick-header-column');
-                instance.columnHeader = cHeaders.eq(instance.columnIndex);
-                // Start the transform.
-                var column = instance.columnHeader;
-                instance.oldColor = column.css('color');
-                instance.oldWidth = column.width();
-                column.css('color', 'red');
-                return false;
-            },
-            transform: function (evt) {
-                var scale = evt.scale;
-                if (scale === 0) {
-                    // why?
-                    return false;
-                }
-                var column = instance.columnHeader;
-                column.width(instance.oldWidth * scale);
-                return false;
-            },
-            transformend: function (evt) {
-                var scale = evt.scale;
-                if (scale === 0) {
-                    // why?
-                    return false;
-                }
-                var column = instance.columnHeader;
-                var newWidth = instance.oldWidth * scale;
-                column.width(newWidth);
-                column.css('color', instance.oldColor);
-                columns[instance.columnIndex].width = newWidth;
-                grid.setColumns(columns);
-                grid.autosizeColumns();
-                return false;
-            },
-
 
             // Tapping selects the tapped row, and unselects any other row.
             // Tapping a selected row pops the cell options menu buttons,
             // doubletapping has the same effect as selecting and tapping again.
-
             tap: function (evt) {
                 var locate = locateCell(grid, evt);
                 if (locate.type == 'cell') {
@@ -501,7 +456,7 @@
                         // If the same row is already selected, then a single tap acts like
                         // a double tap: that is, this is a second tap and doubletap will be in effect.
                         cellOptionsBar.setPositionElement(locate.target, $grid);
-                        cellOptionsBar.show(evt);
+                        cellOptionsBar.show();
                     } else {
                         // If we had no selection, or a different selection from this single row in the set:
                         // Then, the current selection is cleared, and a single
@@ -562,7 +517,6 @@
             e.stopImmediatePropagation();
             e.preventDefault();
         });
- 
  
         // autoresize columns
         var timer;

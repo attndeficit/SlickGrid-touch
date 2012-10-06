@@ -16,37 +16,64 @@
   /* NOTE: OptionsBar EXTENDS BOOTSTRAP-TOOLTIP.js
      ========================================== */
 
+  // a global state accessible as this.global from all instances
+  var global = undefined;
+
   OptionsBar.prototype = $.extend({}, $.fn.tooltip.Constructor.prototype, {
 
     constructor: OptionsBar
 
+  , globalKey: 'optionsbarGlobal'
+
   , init: function (type, element, options) {
         var self = this;
         $.fn.tooltip.Constructor.prototype.init.call(this, type, element, options);
-        // XXX This is a funny issue.... One would assume that the double binding is ignored?
-        // However it seems not.... binding this many times, will multiply events.
-        var hammer = $('body').data('hammer');
-        if (! hammer) {
-            $('body')
-                .hammer({
-                    prevent_default: true
-                });
+        if (global === undefined) {
+            global = {};    // a global state
+            // Avoid multiple binding of hammer. (May be trouble.)
+            // Also, important to make it optimal.
+            // If this is not lightweight enough, then scrolling
+            // will be dead slow.
+            var $body = $('body');
+            if ($body.data('hammer') === undefined) {
+                $body.hammer({
+                    swipe: false,
+                    drag: false,
+                    transform: false,
+                    tap: true,
+                    tap_double: false,
+                    hold: false
+                    });
+            }
+            $(document).on('tap', $.proxy(this.handleBodyTap, this));
         }
-        $('body').on('tap', $.proxy(this.handleTap, this));
+        this.global = global;
+        //this.tip().on('tap', $.proxy(this.handleTipTap, this));
         this.$positionElement = null;
         this.$boundingElement = null;
     }
 
-  , handleTap: function (evt) {
+  , handleBodyTap: function (evt) {
+        // This is a global handler (like classmethod),
+        // it is hiding the last shown widget.
+        // Its tap event handler will be bound
+        // before any other tap events of all instances.
+        if (this.global.shown) {
+            this.global.shown.hide();
+        }
+    }
+
+  , handleTipTap: function (evt) {
         var self = this;
         var realEvt = evt.originalEvent || evt;
         var target = $(realEvt.target);
-        var tip = this.tip();
-        var tappedInside = tip.has(target).length > 0;
-        if (! tappedInside) {
-            // Tapping outside will close this option bar.
-            this.hide();
-        } else {
+        //var tip = this.tip();
+        //var tappedInside = tip.has(target).length > 0;
+        //if (! tappedInside) {
+        //    // Tapping outside will close this option bar.
+        //    this.hide();
+        //} else {
+
             // Tap happened inside.
             // Let's find the command that needs to execute.
             if (target.is('button')) {
@@ -60,10 +87,19 @@
                     command: command
                 }]);
             }
-        } 
+
+
+        //} 
     }
 
   , hide: function () {
+        if (this.global.shown !== this) {
+            // speed up and bail out
+            return;
+        }
+        // forget that we are shown.
+        this.global.shown = null;
+
         $.fn.tooltip.Constructor.prototype.hide.call(this);
         var el = this.getPositionElement();
         el.trigger('hidemenu', [{
@@ -97,6 +133,7 @@
 
             //.bind('click', $.proxy(this.handleButtonTap, this))
       $tip.removeClass('fade top bottom left right in')
+
     }
 
   , hasContent: function () {
@@ -123,11 +160,9 @@
     }
 
   , setPositionElement: function (el, /*optional*/ bounding) {
-      // Initially this hides the element.
-      // This assures that hide() is first called with the old positioning target.
-      var $tip = this.tip();
-      if ($tip.is(':visible')) {
-        this.hide();
+      // hide() is first called with the old positioning target.
+      if (this.global.shown === this) {
+          this.hide();
       }
       // Now, set the position element.
       this.$positionElement = $(el);
@@ -148,14 +183,18 @@
     }
 
  , show: function () {
-    // Show is delayed a little bit. This makes sure
-    // that all instances can _hide_ on the same event, and,
-    // that the to-be-shown menu does not get hidden.
-    setTimeout($.proxy(this.showDelayed, this), 10);
- }
+      var self = this;
+      // Showing with a timeout avoids hiding
+      // the widget from the same event when it's showing.
+      setTimeout(function () {
+          self._show();
+          // Remember that we are shown
+          self.global.shown = self;
+      }, 10);
+    }
 
- , showDelayed: function () {
-     // Override from tooltip's show(), for a better positioning
+ , _show: function () {
+      // Override from tooltip's show(), for a better positioning
       var $tip
         , inside
         , pos
@@ -234,14 +273,24 @@
             positionElement: el
         }]);
 
+        // (Re)bind tap event. Not sure why we need this every time here.
+        $tip.hammer({
+            swipe: false,
+            drag: false,
+            transform: false,
+            tap: true,
+            tap_double: false,
+            hold: false
+            });
+        $tip.on('tap', $.proxy(this.handleTipTap, this));
+
      }
     }
 
   })
 
 
- /* OptionsBar PLUGIN DEFINITION
-  * ======================= */
+ /* OptionsBar PLUGIN DEFINITION */
 
   $.fn.optionsbar = function (option) {
     return this.each(function () {
