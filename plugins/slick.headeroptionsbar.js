@@ -228,7 +228,7 @@
     
     function handleHeaderTap(evt) {
         var target =  $(evt.originalEvent ? evt.originalEvent.target : evt.target);
-        var button = target.find('.slick-header-menubutton');
+        var button = target.closest('.slick-header-column').find('.slick-header-menubutton');
         showMenu.call(button[0]);
     }
 
