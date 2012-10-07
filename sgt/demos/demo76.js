@@ -4,7 +4,7 @@
 /*jslint sub: true */
 /*globals window navigator document */
 /*globals setTimeout clearTimeout setInterval */ 
-/*globals Slick alert */ 
+/*globals Slick alert log*/ 
 
 
 (function ($) {
@@ -40,41 +40,6 @@
         });
     }
 
-    // This is used for the logging.
-    function _safeConvert(obj) {
-        var type = $.type(obj);
-        if (type == 'object' && $(obj).parent().length > 0) {
-            obj = "DOM #" + $(obj).attr('id');
-        } else if (type == 'array' || type == 'object') {
-            var res;
-            if (type == 'array') {
-                res = [];
-            } else {
-                res = {};
-            }
-            $.each(obj, function (key, value) {
-                res[key] = _safeConvert(value);
-            });
-            obj = res;
-        }
-        return obj;
-    }
-
-    // Custom logging. On mobile devices, debug console is
-    // lacking. We provide a way to print log messages
-    // into the html page itself.
-    function log() {
-        var args = [new Date()];
-        var i;
-        for (i = 0; i < arguments.length; i++) {
-            args.push(arguments[i]);
-        }
-        args = _safeConvert(args);
-        var repr = JSON.stringify(args);
-        $('#logger').prepend('<code>' + repr + '</code><br>');
-    }
-    // Make it available for code outside the closure:  sgtdemo.log(....);
-    window.sgtdemo = {log: log};
 
     function requiredFieldValidator(value) {
         if (value === null || value === undefined || !value.length) {
