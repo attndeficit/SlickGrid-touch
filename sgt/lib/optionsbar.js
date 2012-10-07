@@ -72,13 +72,6 @@
         var self = this;
         var realEvt = evt.originalEvent || evt;
         var target = $(realEvt.target);
-        //var tip = this.tip();
-        //var tappedInside = tip.has(target).length > 0;
-        //if (! tappedInside) {
-        //    // Tapping outside will close this option bar.
-        //    this.hide();
-        //} else {
-
             // Tap happened inside.
             // Let's find the command that needs to execute.
             if (target.is('button')) {
@@ -92,9 +85,6 @@
                     command: command
                 }]);
             }
-
-
-        //} 
     }
 
   , hide: function () {
