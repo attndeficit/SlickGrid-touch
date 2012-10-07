@@ -76,12 +76,6 @@
     // Make it available for code outside the closure:  sgtdemo.log(....);
     window.sgtdemo = {log: log};
 
-    function defer(inner, instance) {
-        setTimeout(function () {
-            inner();
-        }, 10);
-    }
-
     function requiredFieldValidator(value) {
         if (value === null || value === undefined || !value.length) {
             return {valid: false, msg: "This is a required field"};
@@ -89,46 +83,6 @@
         else {
             return {valid: true, msg: null};
         }
-    }
-
-    // Locate which cell was touched, from the touch event.
-    // Find a given cell or a given row header.
-    function locateCell(grid, evt) {
-        // There is something strange going on with the event targets here. We would like
-        // to get the target (typically a <div class="slick-cell" />), but that does not seem
-        // to be correct. Using originalEvent is good though.
-        var realEvt = evt.originalEvent || evt;
-        var target = $(realEvt.target);
-        var res;
-        if (target.parent().is('.slick-header-columns')) {
-            var column = target.index();
-            res = {
-                target: target,
-                type: 'header',
-                column: column
-            };
-        } else {
-            // Find out the row and column of the cell
-            var cell = grid.getCellFromEvent(realEvt);
-            if (cell !== null) {
-                // We are in the canvas.
-                var $cell = target.closest('.slick-cell');
-                var state = $cell.hasClass('editable') ? 'editing': 'normal';
-                res = {
-                    target: target,
-                    type: 'cell',
-                    row: cell.row,
-                    column: cell.cell,
-                    state: state
-                };
-            } else {
-                // We are not in the canvas.
-                res = {
-                    type: 'outside'
-                };
-            }
-        }
-        return res;
     }
 
     var dataView;
@@ -373,10 +327,14 @@
         grid.registerPlugin(headerOptionsPlugin); 
 
 
-        var $grid = $('#myGrid');
+        // cell menus
+        var cellOptionsPlugin = new Slick.Plugins.CellOptionsBar({
+        });
+        grid.registerPlugin(cellOptionsPlugin); 
 
 
 /*
+        var $grid = $('#myGrid');
         // Help debugging by logging all the possible events with the cell information.
         $grid.on('hold tap doubletap transformstart transform transformend' +
                     'dragstart drag dragend swipe release', function (evt) {
@@ -391,144 +349,7 @@
         });
 */
 
-        // Cell button bar
 
-        var $canvas = $grid.find('.grid-canvas');
-        var $viewport = $grid.find('.slick-viewport');
-
-        $canvas.optionsbar({
-            content: [
-                {
-                    cssClass: 'btn btn-inverse',
-                    label: "Edit",
-                    command: "edit"
-                },
-                {
-                    cssClass: 'btn btn-inverse',
-                    label: "Delete Row",
-                    command: "delete-row"
-                }
-            ]
-        });
-        var cellOptionsBar = $canvas.data('optionsbar');
-        var finishEditBar;
-        $canvas.on('command.demo76', function (evt, options) {
-            // Find out the row and column of the cell
-            var realEvt = evt.originalEvent || evt;
-            var cell = grid.getCellFromEvent(realEvt);
-            log('Cell command:', options.command, cell);
-            if (options.command == 'edit') {
-                // Set this cell to be the active one. And activate the editor for it.
-                grid.setActiveCell(cell.row, cell.cell);
-                defer(function () {
-                    grid.editActiveCell();
-                });
-                // Pop up a second toolbar that can be used to cancel the editing.
-                finishEditBar.setPositionElement(realEvt.target, $grid);
-                finishEditBar.show();
-
-            } else if (options.command == 'delete-row') {
-                var item = dataView.getItem(cell.row);
-                var RowID = item.id;
-                dataView.deleteItem(RowID);
-                grid.invalidate();
-                grid.render();
-            }
-            
-        
-        });
-
-
-        // Make sure we have a hammer. One is enough. XXX XXX
-        if ($grid.data('hammer') === undefined) {
-            $grid.hammer({
-                swipe: false,
-                drag: false,
-                transform: false,
-                tap: true,
-                tap_double: true,
-                hold: false
-            });
-        }
-
-        var instance = {};    // hold the state of our event workflow.
-        $grid.on({
-
-            // Tapping selects the tapped row, and unselects any other row.
-            // Tapping a selected row pops the cell options menu buttons,
-            // doubletapping has the same effect as selecting and tapping again.
-            tap: function (evt) {
-                var locate = locateCell(grid, evt);
-                if (locate.type == 'cell' && locate.state != 'editing') {
-                    // What is the current selection now?
-                    var selectedRows = grid.getSelectedRows();
-                    var isSameSelection = selectedRows.length == 1 && selectedRows[0] == locate.row;
-                    if (isSameSelection) {
-                        // If the same row is already selected, then a single tap acts like
-                        // a double tap: that is, this is a second tap and doubletap will be in effect.
-                        cellOptionsBar.setPositionElement(locate.target, $grid);
-                        cellOptionsBar.show();
-                    } else {
-                        // If we had no selection, or a different selection from this single row in the set:
-                        // Then, the current selection is cleared, and a single
-                        // row will be selected.
-                        selectedRows = [locate.row];
-                        grid.setSelectedRows(selectedRows);
-                        //
-                        // This must cancel the editing too.
-                        // save the edited cells
-                        if (!Slick.GlobalEditorLock.commitCurrentEdit()) {
-                            // ???
-                            Slick.GlobalEditorLock.cancelCurrentEdit();
-                        }
-                    }
-                }
-            },
-
-            doubletap: function (evt) {
-                var locate = locateCell(grid, evt);
-                if (locate.type == 'cell' && locate.state != 'editing') {
-                    cellOptionsBar.setPositionElement(locate.target, $grid);
-                    cellOptionsBar.show();
-                }
-            }
-
-        });
-
-
-        // The edit buttons are bound to a separate node then the first (hmmm...)
-        $viewport.optionsbar({
-            content: [
-                {
-                    cssClass: 'btn btn-inverse',
-                    label: "Cancel",
-                    command: "cancel-editing"
-                }
-            ]
-        });
-        finishEditBar = $viewport.data('optionsbar');
-        $viewport.on('command.demo76', function (evt, options) {
-            // Find out the row and column of the cell
-            var realEvt = evt.originalEvent || evt;
-            var cell = grid.getCellFromEvent(realEvt);
-            if (options.command == 'cancel-editing') {
-                Slick.GlobalEditorLock.cancelCurrentEdit();
-            }
-        });
-
-        grid.onClick.subscribe(function (e, args) {
-            // Prevent clicking a cell. This would go to edit which we
-            // do not want now.
-            e.stopImmediatePropagation();
-            e.preventDefault();
-        });
-        grid.onDblClick.subscribe(function (e, args) {
-            // Prevent double clicking a cell. This would go to edit which we
-            // do not want now.
-            e.stopImmediatePropagation();
-            e.preventDefault();
-        });
- 
         // autoresize columns
         var timer;
         $(window).resize(function (evt) {
