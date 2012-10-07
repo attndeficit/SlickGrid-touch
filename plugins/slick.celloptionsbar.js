@@ -46,7 +46,7 @@
         });
         var cellOptionsBar = $canvas.data('optionsbar');
         var finishEditBar;
-        $canvas.on('command.demo76', function (evt, options) {
+        $canvas.on('command.celloptionsbar', function (evt, options) {
             // Find out the row and column of the cell
             var realEvt = evt.originalEvent || evt;
             var cell = grid.getCellFromEvent(realEvt);
@@ -141,7 +141,7 @@
             ]
         });
         finishEditBar = $viewport.data('optionsbar');
-        $viewport.on('command.demo76', function (evt, options) {
+        $viewport.on('command.celloptionsbar', function (evt, options) {
             // Find out the row and column of the cell
             var realEvt = evt.originalEvent || evt;
             var cell = grid.getCellFromEvent(realEvt);
@@ -168,10 +168,14 @@
     function destroy() {
       _handler.unsubscribeAll();
       // XXX Is there a better way to get the grid's element?
-      //var $grid = $(_grid.getHeaderRow()).parent().parent();
+      var $grid = $(_grid.getHeaderRow()).parent().parent();
+      var $canvas = $grid.find('.grid-canvas');
+      var $viewport = $grid.find('.slick-viewport');
+      $canvas.optionsbar('destroy');
+      $viewport.optionsbar('destroy');
+      $canvas.off('command.celloptionsbar');
+      $viewport.off('command.celloptionsbar');
     }
-
-    
 
     // Locate which cell was touched, from the touch event.
     // Find a given cell or a given row header.

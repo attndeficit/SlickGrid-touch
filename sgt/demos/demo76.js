@@ -266,6 +266,30 @@
         grid.registerPlugin(cellOptionsPlugin); 
 
 
+        // autoresize columns
+        var responsivenessPlugin = new Slick.Plugins.Responsiveness({
+        });
+        responsivenessPlugin.onResize.subscribe(function (evt, args) {
+            var columns = args.grid.getColumns();
+            var isWide = (args.width > 768); // ipad orientation narrow / wide
+            // Hide or show the last two columns, based on the layout.
+            // XXX this is a little rough... we'd need to be smarter here
+            // to conserve our current columns sizes and order.
+            if (isWide) {
+                if (columns.length < 5) {
+                    columns.push(origColumns[3]);
+                    columns.push(origColumns[4]);
+                }
+            } else {
+                if (columns.length > 3) {
+                    columns = origColumns.slice(0, 3);
+                }
+            }
+            args.grid.setColumns(columns);
+        });
+        grid.registerPlugin(responsivenessPlugin);
+
+
 /*
         var $grid = $('#myGrid');
         // Help debugging by logging all the possible events with the cell information.
@@ -282,36 +306,6 @@
         });
 */
 
-
-        // autoresize columns
-        var timer;
-        $(window).resize(function (evt) {
-            if (timer !== null) {
-                clearTimeout(timer);
-            }
-            timer = setTimeout(function () {
-                var width = $(window).width();
-                var wide = (width > 768); // ipad orientation narrow / wide
-                // Hide or show the last two columns, based on the layout.
-                // XXX this is a little rough... we'd need to be smarter here
-                // to conserve our current columns sizes and order.
-                if (wide) {
-                    if (columns.length < 5) {
-                        columns.push(origColumns[3]);
-                        columns.push(origColumns[4]);
-                    }
-                } else {
-                    if (columns.length > 3) {
-                        columns = origColumns.slice(0, 3);
-                    }
-                }
-
-                // and resize.
-                grid.setColumns(columns);
-                grid.autosizeColumns();
-                timer = null;
-            }, 400);
-        });
 
     });
 
