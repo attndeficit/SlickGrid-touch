@@ -48,13 +48,13 @@
   , init: function (type, element, options) {
         var self = this;
         this.element = $(element);
-        this.options = options;
+        this.wrapperOptions = options;
 
         // Resolve non-JSON marshallable functions
         this.columns = this.processColumns();
 
         // Call the provided hook to post-process.
-        var handleCreate = this.options.handleCreate;
+        var handleCreate = this.wrapperOptions.handleCreate;
         if (handleCreate !== undefined) {
             handleCreate.apply(this);
         } else {
@@ -65,8 +65,8 @@
   , processColumns: function () {
         var self = this;
         var results = [];
-        var options = this.options;
-        $.each(this.options.columns, function(index, columnDef) {
+        var options = this.wrapperOptions;
+        $.each(options.columns, function(index, columnDef) {
             var defaults = {};
             // id defaults to columnDef.field
             defaults.id = columnDef.field;
@@ -83,7 +83,7 @@
         return results;
     }
 
- ,  handleCreate: function() {
+ ,  handleCreate: function () {
         // Create a simple grid configuration.
         //
         // This handler will run after the options
@@ -92,13 +92,13 @@
         //
         // Variables you can access from this handler:
         //
-        // this:              will equal to the SlickGrid object instance
-        // this.element:      the element to bind the grid to
-        // this.columns:      column definitions (pre-processed)
-        // this.options:      options passed to this object at creation
+        // this:                  will equal to the SlickGrid object instance
+        // this.element:          the element to bind the grid to
+        // this.columns:          column definitions (pre-processed)
+        // this.wrapperOptions:   options passed to this object at creation
         //
         var dataView = new Slick.Data.DataView({inlineFilters: true});
-        var grid = new Slick.Grid(this.element, this.dataView, this.columns, this.options.slickgridOptions);
+        var grid = new Slick.Grid(this.element, dataView, this.columns, this.wrapperOptions.slickgridOptions);
         var columns = this.columns;
 
         var sortcol = columns[0].field;
@@ -117,7 +117,7 @@
 
         // initialize the model after all the events have been hooked up
         dataView.beginUpdate();
-        dataView.setItems(this.options.items);
+        dataView.setItems(this.wrapperOptions.items);
         dataView.endUpdate();
 
     }
