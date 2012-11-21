@@ -45,6 +45,22 @@
 
     constructor: SlickGrid
 
+  , init: function (type, element, options) {
+        var self = this;
+        this.element = $(element);
+        this.options = options;
+
+        // Resolve non-JSON marshallable functions
+        this.columns = this.processColumns();
+
+        // Call the provided hook to post-process.
+        var handleCreate = this.options.handleCreate;
+        if (handleCreate !== undefined) {
+            handleCreate.apply(this);
+        } else {
+            this.handleCreate();
+        }
+    }
 
   , processColumns: function () {
         var self = this;
@@ -67,42 +83,46 @@
         return results;
     }
 
-  , createDataView: function () {
-        // Create a data view, if the options.data is not specified.
-        if (this.options.dataView !== undefined) {
-            this.dataView = this.options.dataView;
-        } else {
-            this.dataView = new Slick.Data.DataView({inlineFilters: true});
+ ,  handleCreate: function() {
+        // Create a simple grid configuration.
+        //
+        // This handler will run after the options
+        // have been preprocessed. It can be overridden by passing
+        // the handleCreate option at creation time.
+        //
+        // Variables you can access from this handler:
+        //
+        // this:              will equal to the SlickGrid object instance
+        // this.element:      the element to bind the grid to
+        // this.columns:      column definitions (pre-processed)
+        // this.options:      options passed to this object at creation
+        //
+        var dataView = new Slick.Data.DataView({inlineFilters: true});
+        var grid = new Slick.Grid(this.element, this.dataView, this.columns, this.options.slickgridOptions);
+        var columns = this.columns;
+
+        var sortcol = columns[0].field;
+        var sortdir = 1;
+        function comparer(a, b) {
+            var x = a[sortcol], y = b[sortcol];
+            return (x == y ? 0 : (x > y ? 1 : -1));
         }
-    }
-        
-  , createGrid: function () {
-        this.grid = new Slick.Grid(this.element, this.dataView, this.columns, this.options.slickgridOptions);
-    }
 
-  , init: function (type, element, options) {
-        var self = this;
-        this.element = $(element);
-        this.options = options;
+        grid.onSort.subscribe(function (e, args) {
+            sortdir = args.sortAsc ? 1 : -1;
+            sortcol = args.sortCol.field;
 
-        // Resolve non-JSON marshallable functions
-        this.columns = this.processColumns();
-        // Save original column defs, too.
-        this.origColumns = this.columns.slice();
+            dataView.sort(comparer, args.sortAsc);
+        });
 
-        // Create the data view.
-        this.createDataView();
-        // Create the grid.
-        this.createGrid();
-        // Call the provided hook to post-process.
-        var handleCreate = this.options.handleCreate;
-        if (handleCreate !== undefined) {
-            handleCreate.apply(this);
-        }
+        // initialize the model after all the events have been hooked up
+        dataView.beginUpdate();
+        dataView.setItems(this.options.items);
+        dataView.endUpdate();
+
     }
 
   };
-
 
  /* SlickGrid PLUGIN DEFINITION */
 
