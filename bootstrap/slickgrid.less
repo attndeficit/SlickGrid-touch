@@ -1,6 +1,8 @@
 
 /* Mixins for SlickGrid */
 
+
+
 .slickGrid () {
 
     width: 100%;
@@ -86,15 +88,16 @@
             border-top: 0px;
             border-bottom: 0px;
 
-            @slickgridHoverHeaderColor: lighten(@textColor, 20%);   // XXX
-            @slickgridSortingHeaderColor: lighten(@textColor, 20%);   // XXX
-            
-            //color: lighten(@textColor, 20%);
+            //@slickgridHoverHeaderColor: lighten(@textColor, 20%);   // XXX
+            //@slickgridSortingHeaderColor: lighten(@textColor, 20%);   // XXX
 
+            @slickgridHoverHeaderColor: @textColor;
+            @slickgridSortingHeaderColor: @textColor;
+            
             .reset-columns () {
                 /* like TH  */
                 background: @tableBackground;
-                font-family: @serifFontFamily;
+                font-family: @sansFontFamily;
                 color: @textColor;
                 font-weight: bold;
                 text-shadow: 0 -1px 0 rgba(0,0,0,.4);
