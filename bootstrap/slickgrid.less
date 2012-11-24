@@ -23,9 +23,11 @@
 
     // Reset the margin of the checkboxes. The grid
     // needs a selection checbkx column. Bootstrap gives
-    // these elements a 4px top margin, which we have to reset.
+    // these elements a 4px top margin, which we have to reset
+    // by aligning to baseline.
     input[type="checkbox"] {
-        margin: 0;
+        vertical-align: baseline;
+        margin: 0;   // paranoid
     }
 
     .slick-viewport {
