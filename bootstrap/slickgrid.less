@@ -21,6 +21,13 @@
         }
     }
 
+    // Reset the margin of the checkboxes. The grid
+    // needs a selection checbkx column. Bootstrap gives
+    // these elements a 4px top margin, which we have to reset.
+    input[type="checkbox"] {
+        margin: 0;
+    }
+
     .slick-viewport {
         // Add a top border to visually separate the headers.
         border-top: 1px solid @tableBorder;
