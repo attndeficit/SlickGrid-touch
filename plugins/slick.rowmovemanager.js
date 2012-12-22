@@ -13,7 +13,12 @@
     var _self = this;
     var _handler = new Slick.EventHandler();
     var _defaults = {
-      cancelEditOnDrag: false
+      cancelEditOnDrag: false,
+      // By default, a move of an unselected row
+      // will make that row only as the new selection.
+      // Setting this to true will keep the current
+      // selection and add the row.
+      keepSelectionOnMove: false
     };
 
     function init(grid) {
@@ -53,7 +58,10 @@
       var selectedRows = _grid.getSelectedRows();
 
       if (selectedRows.length == 0 || $.inArray(cell.row, selectedRows) == -1) {
-        selectedRows = [cell.row];
+        if (! options.keepSelectionOnMove) {
+          selectedRows = [];
+        }
+        selectedRows.push(cell.row);
         _grid.setSelectedRows(selectedRows);
       }
 
