@@ -18,7 +18,11 @@
       // will make that row only as the new selection.
       // Setting this to true will keep the current
       // selection and add the row.
-      keepSelectionOnMove: false
+      keepSelectionOnMove: false,
+      // By default, a single row is selected when it is dragged.
+      // Setting singleStaysSelected to false, will cause a single dragged
+      // element unchanged at the end of the operation.
+      singleStaysSelected: true
     };
 
     function init(grid) {
@@ -57,7 +61,8 @@
 
       var selectedRows = _grid.getSelectedRows();
 
-      if (selectedRows.length == 0 || $.inArray(cell.row, selectedRows) == -1) {
+      dd.noInitialSelection = selectedRows.length === 0;
+      if (dd.noInitialSelection || $.inArray(cell.row, selectedRows) == -1) {
         if (! options.keepSelectionOnMove) {
           selectedRows = [];
         }
@@ -132,6 +137,13 @@
         };
         // TODO:  _grid.remapCellCssClasses ?
         _self.onMoveRows.notify(eventData);
+      }
+
+      // if keepSelectionMove is true, but there was no initial selection,
+      // then the single moved element will be unselected.
+      // This only happens for single selections.
+      if (! options.singleStaysSelected && dd.noInitialSelection) {
+        _grid.setSelectedRows([]);
       }
     }
 
