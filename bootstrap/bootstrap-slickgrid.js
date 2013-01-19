@@ -29,7 +29,7 @@
         postInit: function () {
             // Call the provided hook to post-process.
             var handleCreate = this.wrapperOptions.handleCreate;
-            if (handleCreate !== undefined) {
+            if (handleCreate) {
                 handleCreate.apply(this);
             } else {
                 this.handleCreate();
