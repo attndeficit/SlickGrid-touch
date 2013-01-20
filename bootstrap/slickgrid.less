@@ -1,12 +1,21 @@
 
 /* Mixins for SlickGrid */
 
-.slickGrid () {
+/* Used from variables.less:
+ *
+ * @baseFontSize (unless, font size is passed as an option)
+ * @tableBorder
+ * @linkColor
+ * @tableBackgroundAccent
+ * @textColor
+ *
+ */
 
-    width: 100%;
+.SlickGrid (@fontSize:@baseFontSize) {
+
     position: relative;
 
-    .slickcell-padding () {
+    .SlickCell () {
         @fontSize: 14px;
         padding: 5px 7.5834px;
         font-size: @fontSize;
@@ -50,7 +59,7 @@
 
         /* XXX ... needed ? */
         .slick-cell {
-            .slickcell-padding ();
+            .SlickCell ();
             a, a:visited, .ui-widget-content a, .ui-widget-content a:visited {
                 color: @linkColor;
                 text-decoration: none;
@@ -90,7 +99,7 @@
             margin: 0;
 
             &.ui-state-default {
-                .slickcell-padding ();
+                .SlickCell ();
             }
 
             border-right: 1px solid #FFFFFF;
@@ -101,7 +110,7 @@
             @slickgridHoverHeaderColor: @textColor;
             @slickgridSortingHeaderColor: @textColor;
             
-            .reset-columns () {
+            .ResetColumns () {
                 /* like TH  */
                 background: @tableBackground;
                 font-family: @sansFontFamily;
@@ -116,9 +125,9 @@
                 }    
             }
  
-            .reset-columns ();
+            .ResetColumns ();
             &.ui-state-default {
-                .reset-columns ();
+                .ResetColumns ();
             }
            
             &.slick-header-column-sorted {
