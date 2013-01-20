@@ -49,7 +49,6 @@
       var o = this.wrapperOptions;
       var grid = new Slick.Grid(this.element, o.data,
         o.columns, o.slickGridOptions);
-      grid.render(); // XXX ?
     }
 
   };

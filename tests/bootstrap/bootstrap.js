@@ -36,6 +36,22 @@ test("default create handler", function() {
         wrapperOptions: {}
     };
     var grid = {
+    };
+    window.Slick = {
+        Grid: sinon.stub().returns(grid)
+    };
+    SlickGrid.prototype.handleCreate.call(wrapper);
+});
+
+/*
+test("custom create handler", function() {
+    var sinon = this.sinon;
+    var SlickGrid = $.fn.slickgrid.Constructor;
+    var wrapper = {
+        element: 'ELEMENT',
+        wrapperOptions: {}
+    };
+    var grid = {
         onSort: {
             subscribe: sinon.mock()
         },
@@ -56,7 +72,6 @@ test("default create handler", function() {
     SlickGrid.prototype.handleCreate.call(wrapper);
 
 });
-
-
+*/
 
 })(window.jQuery);
