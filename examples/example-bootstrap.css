@@ -163,3 +163,9 @@ body .grid .slick-header-columns .slick-header-column.ui-state-default {
 .grid .slick-header-columns .slick-header-column .slick-sort-indicator-desc {
   vertical-align: middle;
 }
+.grid-col {
+  padding: 35px;
+}
+.info-col {
+  padding: 20px;
+}
