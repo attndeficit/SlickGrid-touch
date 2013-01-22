@@ -68,6 +68,7 @@
 <script src="../slick.grid.js"></script>
 <script src="../slick.dataview.js"></script>
 <script src="../plugins/slick.checkboxselectcolumn.js"></script>
+<script src="../plugins/slick.rowselectionmodel.js"></script>
 <script src="../bootstrap/bootstrap-slickgrid.js"></script>
 <script>
 jQuery(function ($) {
@@ -87,13 +88,8 @@ jQuery(function ($) {
     {id: "%", name: "% Complete", field: "percentComplete", width: 100, sortable: true},
     {id: "start", name: "Start", field: "start", width: 100, sortable: true},
     {id: "finish", name: "Finish", field: "finish", width: 100, sortable: true},
-    {id: "effort-driven", name: "Effort Driven", field: "effortDriven", width: 50, sortable: true}
+    {id: "effort-driven", name: "Effort Driven", field: "effortDriven", width: 100, sortable: true}
   ];
-
-  var columnsWithSelection = columnsSortable.slice();
-  // checkbox column: add it
-  var checkboxSelector = new Slick.CheckboxSelectColumn({});
-  columnsWithSelection.unshift(checkboxSelector.getColumnDefinition());
 
   var dataFull = [];
   for (var i = 0; i < 2000; i++) {
@@ -127,7 +123,7 @@ jQuery(function ($) {
 
   // Example 2: fewer rows, no vertical scrollbar
   columns = columnsBasic.slice();
-  data = dataFull.splice(0, 5);
+  data = dataFull.slice().splice(0, 5);
   $("#grid2").slickgrid({
     columns: columns,
     data: data,
@@ -198,7 +194,7 @@ jQuery(function ($) {
   });
 
   // Example 4: Row selection
-  columns = columnsWithSelection.slice();
+  columns = columnsSortable.slice();
   data = dataFull.slice();
   $("#grid4").slickgrid({
     columns: columns,
@@ -214,11 +210,20 @@ jQuery(function ($) {
     sortDir: true,
     handleCreate: function () {
       var o = this.wrapperOptions;
+    
+      // checkbox column: add it
+      var columns = o.columns.slice();
+      var checkboxSelector = new Slick.CheckboxSelectColumn({});
+      columns.unshift(checkboxSelector.getColumnDefinition());
 
       // configure grid with client-side data view
       var dataView = new Slick.Data.DataView();
       var grid = new Slick.Grid(this.element, dataView,
-        o.columns, o.slickGridOptions);
+        columns, o.slickGridOptions);
+
+      // selection model
+      grid.setSelectionModel(new Slick.RowSelectionModel());
+      grid.registerPlugin(checkboxSelector);
 
       // sorting
       var sortCol = o.sortCol;
@@ -245,6 +250,10 @@ jQuery(function ($) {
       dataView.setItems(o.data);
       dataView.endUpdate();
       
+      // if you don't want the items that are not visible (due to being filtered out
+      // or being on a different page) to stay selected, pass 'false' to the second arg
+      dataView.syncGridSelection(grid, true);
+
       grid.resizeCanvas(); // XXX Why is this needed? A possible bug?
                            // If this is missing, the grid will have
                            // a horizontal scrollbar, and the vertical
