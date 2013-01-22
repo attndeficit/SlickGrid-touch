@@ -43,35 +43,4 @@ test("default create handler", function() {
     SlickGrid.prototype.handleCreate.call(wrapper);
 });
 
-/*
-test("custom create handler", function() {
-    var sinon = this.sinon;
-    var SlickGrid = $.fn.slickgrid.Constructor;
-    var wrapper = {
-        element: 'ELEMENT',
-        wrapperOptions: {}
-    };
-    var grid = {
-        onSort: {
-            subscribe: sinon.mock()
-        },
-        render: sinon.mock()
-    };
-    var DataView = sinon.spy(function () {
-        this.beginUpdate = sinon.mock();
-        this.setItems = sinon.mock();
-        this.endUpdate = sinon.mock();
-    });
-    window.Slick = {
-        Grid: sinon.stub().returns(grid),
-        Data: {
-            DataView: DataView
-        }
-    };
-          
-    SlickGrid.prototype.handleCreate.call(wrapper);
-
-});
-*/
-
 })(window.jQuery);
