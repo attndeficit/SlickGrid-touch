@@ -45,6 +45,14 @@
       <h2>Sortable and reordarable columns</h3>
     </td>
   </tr>
+  <tr>
+    <td valign="top" class="grid-col">
+      <div id="grid4" class="grid"></div>
+    </td>
+    <td valign="top" class="info-col">
+      <h2>Checkbox select column for row selection</h3>
+    </td>
+  </tr>
 </table>
 <script src="../lib/jquery-1.7.min.js"></script>
 <script src="../lib/jquery.event.drag-2.0.min.js"></script>
@@ -59,6 +67,7 @@
 <script src="../slick.core.js"></script>
 <script src="../slick.grid.js"></script>
 <script src="../slick.dataview.js"></script>
+<script src="../plugins/slick.checkboxselectcolumn.js"></script>
 <script src="../bootstrap/bootstrap-slickgrid.js"></script>
 <script>
 jQuery(function ($) {
@@ -81,6 +90,11 @@ jQuery(function ($) {
     {id: "effort-driven", name: "Effort Driven", field: "effortDriven", width: 50, sortable: true}
   ];
 
+  var columnsWithSelection = columnsSortable.slice();
+  // checkbox column: add it
+  var checkboxSelector = new Slick.CheckboxSelectColumn({});
+  columnsWithSelection.unshift(checkboxSelector.getColumnDefinition());
+
   var dataFull = [];
   for (var i = 0; i < 2000; i++) {
     dataFull[i] = {
@@ -97,6 +111,7 @@ jQuery(function ($) {
   var columns;
   var data;
 
+  // Example 1
   columns = columnsBasic.slice();
   data = dataFull.slice();
   $("#grid1").slickgrid({
@@ -110,6 +125,7 @@ jQuery(function ($) {
     }
   });
 
+  // Example 2: fewer rows, no vertical scrollbar
   columns = columnsBasic.slice();
   data = dataFull.splice(0, 5);
   $("#grid2").slickgrid({
@@ -123,6 +139,7 @@ jQuery(function ($) {
     }
   });
 
+  // Example 3: sortable, reorderable columns
   columns = columnsSortable.slice();
   data = dataFull.slice();
   $("#grid3").slickgrid({
@@ -179,6 +196,65 @@ jQuery(function ($) {
     }
 
   });
+
+  // Example 4: Row selection
+  columns = columnsWithSelection.slice();
+  data = dataFull.slice();
+  $("#grid4").slickgrid({
+    columns: columns,
+    data: data,
+    slickGridOptions: {
+      enableCellNavigation: true,
+      enableColumnReorder: true,
+      forceFitColumns: true,
+      rowHeight: 35
+    },
+    // handleCreate takes some extra options:
+    sortCol: undefined,
+    sortDir: true,
+    handleCreate: function () {
+      var o = this.wrapperOptions;
+
+      // configure grid with client-side data view
+      var dataView = new Slick.Data.DataView();
+      var grid = new Slick.Grid(this.element, dataView,
+        o.columns, o.slickGridOptions);
+
+      // sorting
+      var sortCol = o.sortCol;
+      var sortDir = o.sortDir;
+      function comparer(a, b) {
+        var x = a[sortCol], y = b[sortCol];
+        return (x == y ? 0 : (x > y ? 1 : -1));
+      }
+      grid.onSort.subscribe(function (e, args) {
+          sortDir = args.sortAsc;
+          sortCol = args.sortCol.field;
+          dataView.sort(comparer, sortDir);
+          grid.invalidateAllRows();
+          grid.render();
+      });
+
+      // set the initial sorting to be shown in the header
+      if (sortCol) {
+          grid.setSortColumn(sortCol, sortDir);
+      }
+
+       // initialize the model after all the events have been hooked up
+      dataView.beginUpdate();
+      dataView.setItems(o.data);
+      dataView.endUpdate();
+      
+      grid.resizeCanvas(); // XXX Why is this needed? A possible bug?
+                           // If this is missing, the grid will have
+                           // a horizontal scrollbar, and the vertical
+                           // scrollbar cannot be moved. A column reorder
+                           // action fixes the situation.
+      
+    }
+
+  });
+
 
 
 });
