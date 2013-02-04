@@ -8,6 +8,7 @@
  * @linkColor
  * @tableBackgroundAccent
  * @textColor
+ * @navbarLinkColorHover
  *
  * This means that if you have an updated variable.less, the grid will
  * follow your changes.
@@ -88,7 +89,7 @@
                 text-decoration: none;
             }
             a:hover, .ui-widget-content a:hover {
-                color: lighten(@linkColor, 20%);
+                color: @linkColorHover;
                 text-decoration: none;
                 border-bottom: none;
             }

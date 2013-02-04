@@ -12,6 +12,7 @@
 @tableBackgroundAccent: #f9f9f9; // for striping
 @grayDark:              #333;
 @textColor:             @grayDark;
+@navbarLinkColorHover:  @grayDark;
 
 */
 /* Mixins for SlickGrid */
@@ -22,6 +23,7 @@
  * @linkColor
  * @tableBackgroundAccent
  * @textColor
+ * @navbarLinkColorHover
  *
  * This means that if you have an updated variable.less, the grid will
  * follow your changes.
@@ -96,7 +98,7 @@ body .grid .grid-canvas .slick-cell {
 }
 .grid .grid-canvas .slick-cell a:hover,
 .grid .grid-canvas .slick-cell .ui-widget-content a:hover {
-  color: #33bbff;
+  color: #005580;
   text-decoration: none;
   border-bottom: none;
 }
