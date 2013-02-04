@@ -9,14 +9,37 @@
  * @tableBackgroundAccent
  * @textColor
  *
+ * This means that if you have an updated variable.less, the grid will
+ * follow your changes.
+ *
+ * Example usage:
+ *
+ * 
+    @import "variables.less";
+    @import "../bootstrap/slickgrid.less";
+
+    .grid {
+        // Set dimensions
+        height: 380px;  // for 10 rows x 35px
+        width: 800px;
+
+        // Apply all grid styles
+        .SlickGrid();
+
+        // Add a bottom border to the grid.
+        border-bottom: 1px solid @tableBorder;
+    }
+
+ *
  */
 
-.SlickGrid (@fontSize:@baseFontSize) {
+.SlickGrid (@fontSize:@baseFontSize,
+            @headerColumnHeight:20px) {
 
     position: relative;
 
     .SlickCell () {
-        @fontSize: 14px;
+        // reset some essentials.
         padding: 5px 7.5834px;
         font-size: @fontSize;
         td {
@@ -93,19 +116,13 @@
         background: @tableBackground;
 
         .slick-header-column {
-            height: 20px;
-            line-height: 20px;
-
+            height: @headerColumnHeight;
+            line-height: @fontSize;
             margin: 0;
-
+            border: 0;
             &.ui-state-default {
                 .SlickCell ();
             }
-
-            border-right: 1px solid #FFFFFF;
-            border-left: 0px;
-            border-top: 0px;
-            border-bottom: 0px;
 
             @slickgridHoverHeaderColor: @textColor;
             @slickgridSortingHeaderColor: @textColor;
