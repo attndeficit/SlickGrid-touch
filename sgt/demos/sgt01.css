@@ -1,0 +1,10 @@
+/* Stuff from examples, moved over for sdgrid */
+
+.sgt-grid * {
+    font-family: arial;
+    font-size: 8pt;
+}
+
+.slick-row.odd {
+    background: #fafafa;
+}
