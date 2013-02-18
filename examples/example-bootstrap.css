@@ -177,10 +177,6 @@ body .grid .slick-header-columns .slick-header-column.ui-state-default {
 .grid .slick-header-columns .slick-header-column .slick-sort-indicator-asc {
   vertical-align: middle;
 }
-.grid .slick-header-columns .slick-header-column .slick-sort-indicator-asc:before {
-  border-top: 0;
-  border-bottom: .266666667em solid #fff;
-}
 .grid .slick-header-columns .slick-header-column .slick-sort-indicator-desc {
   vertical-align: middle;
 }
