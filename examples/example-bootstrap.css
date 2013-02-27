@@ -12,6 +12,7 @@
 @tableBackgroundAccent: #f9f9f9; // for striping
 @grayDark:              #333;
 @textColor:             @grayDark;
+@navbarLinkColorHover:  @grayDark;
 
 */
 /* Mixins for SlickGrid */
@@ -22,6 +23,29 @@
  * @linkColor
  * @tableBackgroundAccent
  * @textColor
+ * @navbarLinkColorHover
+ *
+ * This means that if you have an updated variable.less, the grid will
+ * follow your changes.
+ *
+ * Example usage:
+ *
+ * 
+    @import "variables.less";
+    @import "../bootstrap/slickgrid.less";
+
+    .grid {
+        // Set dimensions
+        height: 380px;  // for 10 rows x 35px
+        width: 800px;
+
+        // Apply all grid styles
+        .SlickGrid();
+
+        // Add a bottom border to the grid.
+        border-bottom: 1px solid @tableBorder;
+    }
+
  *
  */
 .grid {
@@ -74,7 +98,7 @@ body .grid .grid-canvas .slick-cell {
 }
 .grid .grid-canvas .slick-cell a:hover,
 .grid .grid-canvas .slick-cell .ui-widget-content a:hover {
-  color: #33bbff;
+  color: #005580;
   text-decoration: none;
   border-bottom: none;
 }
@@ -99,12 +123,9 @@ body .grid .grid-canvas .slick-cell {
 }
 .grid .slick-header-columns .slick-header-column {
   height: 20px;
-  line-height: 20px;
+  line-height: 14px;
   margin: 0;
-  border-right: 1px solid #FFFFFF;
-  border-left: 0px;
-  border-top: 0px;
-  border-bottom: 0px;
+  border: 0;
   /* like TH  */
 
   background: transparent;
@@ -155,10 +176,6 @@ body .grid .slick-header-columns .slick-header-column.ui-state-default {
 }
 .grid .slick-header-columns .slick-header-column .slick-sort-indicator-asc {
   vertical-align: middle;
-}
-.grid .slick-header-columns .slick-header-column .slick-sort-indicator-asc:before {
-  border-top: 0;
-  border-bottom: .266666667em solid #fff;
 }
 .grid .slick-header-columns .slick-header-column .slick-sort-indicator-desc {
   vertical-align: middle;
