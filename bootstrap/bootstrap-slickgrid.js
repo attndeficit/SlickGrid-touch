@@ -22,7 +22,10 @@
     init: function (type, element, options) {
       var self = this;
       this.element = $(element);
-      this.wrapperOptions = options;
+      this.wrapperOptions = $.extend(true, options, {
+        // always render without ui-* css styles
+        slickGridOptions: {jQueryUiStyles: false}
+      });
       this.postInit();
     },
 

@@ -85,7 +85,8 @@ if (typeof Slick === "undefined") {
       fullWidthRows: false,
       multiColumnSort: false,
       defaultFormatter: defaultFormatter,
-      forceSyncScrolling: false
+      forceSyncScrolling: false,
+      jQueryUiStyles: true
     };
 
     var columnDefaults = {
@@ -219,8 +220,10 @@ if (typeof Slick === "undefined") {
           .empty()
           .css("overflow", "hidden")
           .css("outline", 0)
-          .addClass(uid)
-          .addClass("ui-widget");
+          .addClass(uid);
+      if (options.jQueryUiStyles) {
+        $container.addClass("ui-widget");
+      }
 
       // set up a positioning container if needed
       if (!/relative|absolute|fixed/.test($container.css("position"))) {
@@ -1375,7 +1378,9 @@ if (typeof Slick === "undefined") {
         rowCss += " " + metadata.cssClasses;
       }
 
-      stringArray.push("<div class='ui-widget-content " + rowCss + "' style='top:" + (options.rowHeight * row - offset) + "px'>");
+      stringArray.push("<div class='" +
+        (options.jQueryUiStyles ? "ui-widget-content " : "") +
+        rowCss + "' style='top:" + (options.rowHeight * row - offset) + "px'>");
 
       var colspan, m;
       for (var i = 0, ii = columns.length; i < ii; i++) {
